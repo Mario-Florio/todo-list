@@ -1,7 +1,8 @@
-import './style-sheets/style.css'
+import './style.css'
+import { render } from './global-functions'
+import { formatDistance, addWeeks, addDays, subDays } from 'date-fns'
+import { navbar } from './navbar/navbar'
 
-const body = document.querySelector('body')
-const el = document.createElement('div')
-el.classList.add('styled')
+let distanceBetweenDatesInRealWords = formatDistance(addWeeks(new Date(), 5), new Date(), { addSuffix: true })
 
-body.appendChild(el)
+render(navbar)
