@@ -1,0 +1,144 @@
+
+.side-menu {
+    position: absolute;
+    left: -320px;
+    height: 100dvh;
+    width: 320px;
+    background-color: rgb(236, 236, 236);
+    font-family: 'Roboto';
+}
+
+.side-menu-active {
+    left: 0;
+}
+
+.side-menu, .side-menu-active {
+    transition: 0.5s;
+}
+
+#side-menu-links {
+    margin: 17px 0;
+}
+
+.side-menu-links {
+    display: flex;
+    align-items: center;
+    color: rgb(69, 69, 69);
+    padding: 5px 0 5px 20px;
+    margin: 10px 5px;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.side-menu-links:hover {
+    background-color: rgb(208, 208, 208);
+}
+
+#inbox-icon {
+    height: 16px;
+    width: 14.5px;
+    margin-right: 10px;
+    border: 1.5px solid dodgerblue;
+    border-bottom: 4px solid dodgerblue;
+    border-radius: 2px;
+}
+
+#inbox-icon-left-flange {
+    position: relative;
+    top: 8px;
+    left: -1px;
+    background-color: dodgerblue;
+    height: 3px;
+    width: 5px;
+    border-radius: .5px;
+}
+
+#inbox-icon-right-flange {
+    position: relative;
+    top: 5px;
+    right: -7.5px;
+    background-color: dodgerblue;
+    height: 3px;
+    width: 5px;
+    border-radius: .5px;
+}
+
+#today-icon {
+    color: green;
+    font-family: sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 0 3.5px;
+    margin-right: 10px;
+    border: 1.5px solid green;
+    border-top: 4px solid green;
+    border-radius: 2px;
+}
+
+#upcoming-icon {
+    height: 16px;
+    width: 14.5px;
+    margin-right: 10px;
+    border: 1.5px solid purple;
+    border-top: 4px solid purple;
+    border-radius: 2px;
+}
+
+#important-icon {
+    color: red;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 900;
+    padding: 0 4.5px;
+    margin-right: 10px;
+}
+
+#projects-label {
+    display: flex;
+    align-items: center;
+    font-size: 1.1rem;
+    padding: 9px 0 9px 20px;
+    margin: 2px 5px;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+#projects-label:hover {
+    background-color: rgb(208, 208, 208);
+}
+
+#dropdown-arrow {
+    margin-right: 10px;
+}
+
+.dropdown-bars {
+    position: relative;
+    bottom: 5px;
+    display: inline-block;
+    background-color: rgb(69, 69, 69);
+    height: 2px;
+    width: 7px;
+}
+
+#dropdown-bar1 {
+    position: relative;
+    left: 5px;
+}
+
+#dropdown-bar1 {
+    position: relative;
+    right: 5px;
+}
+
+#dropdown-bar1, #dropdown-bar2 {
+    transition: 0.4s;
+}
+
+.arrow-mode>#dropdown-bar1 {
+    background-color: black;
+    transform: rotate(30deg) translateX(.75px);
+}
+
+.arrow-mode>#dropdown-bar2 {
+    background-color: black;
+    transform: rotate(-30deg) translateX(-.75px);
+}

@@ -1,5 +1,6 @@
 import { createHTML } from '../global-functions'
 import './navbar.css'
+import { sideMenu } from '../side-menu/side-menu'
 
 export const navbar = createHTML(`
     <div class="navbar"></div>
@@ -14,9 +15,9 @@ const hamburgerMenu = createHTML(`
 `)
 
 const links = createHTML(`
-    <div id="links">
-        <div class="links">Today</div>
-        <div class="links">Projects</div>
+    <div id="navbar-links">
+        <div class="navbar-links">Today</div>
+        <div class="navbar-links">Projects</div>
     </div>
 `)
 
@@ -58,6 +59,20 @@ navbarContainerLeft.appendChild(searchBar)
 navbarContainerRight.appendChild (notificationBell)
 navbarContainerRight.appendChild(accountIcon)
 
+//Cache HTML
+const today = links.children[0]
+const projects = links.children[1]
+
+//Bind Events
 hamburgerMenu.addEventListener('click', () => {
     hamburgerMenu.classList.toggle('is-active')
+    sideMenu.classList.toggle('side-menu-active')
+})
+
+today.addEventListener('click', () => {
+    console.log('today')
+})
+
+projects.addEventListener('click', () => {
+    console.log('projects')
 })
