@@ -1,5 +1,3 @@
-import { navbar } from "./navbar/navbar"
-
 export function createHTML(html) {
     const template = document.createElement('template')
     template.innerHTML = html.trim()
@@ -11,6 +9,13 @@ export function render(page) {
     while (body.hasChildNodes() === true) {
         body.removeChild(body.lastChild)
     }
-    body.appendChild(navbar)
     body.appendChild(page)
+}
+
+export function createPage(arrOfNodes) {
+    let page = createHTML(`<div></div>`)
+    for (let i = 0; arrOfNodes.length > i; i++) {
+        page.appendChild(arrOfNodes[i])
+    }
+    return page
 }

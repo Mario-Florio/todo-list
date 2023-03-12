@@ -1,0 +1,61 @@
+.carousel {
+    position: relative;
+    width: 100vw;
+    height: 40vh;
+    overflow: hidden;
+}
+
+.carousel > ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.slide {
+    position: absolute;
+    top: 60px;
+    left: 400px;
+    font-size: 0;
+    opacity: 0;
+    pointer-events: none;
+    list-style: none;
+    transition: 0.2s;
+}
+
+.slide[data-latent] {
+    position: absolute;
+    top: 60px;
+    left: 400px;
+    font-size: 3.5rem;
+    opacity: .3;
+    pointer-events: inherit;
+    list-style: none;
+    transition: 0.4s;
+}
+
+.slide[data-active] {
+    position: absolute;
+    top: 60px;
+    left: 80px;
+    font-size: 4.5rem;
+    opacity: 1;
+    list-style: none;
+    transition: 0.4s;
+}
+
+.carousel-button {
+    position: absolute;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    font-weight: 100;
+    cursor: pointer;
+}
+
+.carousel-button.prev {
+    left: 1rem;
+}
+
+.carousel-button.next {
+    left: 6rem;
+}

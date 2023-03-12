@@ -4,8 +4,7 @@
     left: -320px;
     height: 100dvh;
     width: 320px;
-    background-color: rgb(236, 236, 236);
-    font-family: 'Roboto';
+    background-image: linear-gradient(to right, rgb(147, 147, 147), rgb(235, 235, 235));
 }
 
 .side-menu-active {
@@ -16,34 +15,59 @@
     transition: 0.5s;
 }
 
-#side-menu-links {
+#side-menu-main-links {
     margin: 17px 0;
 }
 
 .side-menu-links {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    color: rgb(69, 69, 69);
     padding: 5px 0 5px 20px;
     margin: 10px 5px;
     border-radius: 2px;
     cursor: pointer;
 }
 
-.side-menu-links:hover {
-    background-color: rgb(208, 208, 208);
+.side-menu-links-left-container {
+    display: flex;
+    font-size: 14px;
+    font-weight: 200;
+}
+.side-menu-links-right-container {
+    color: rgb(141, 141, 141);
+    font-size: 11px;
+    font-weight: 100;
+    margin-right: 10px;
 }
 
-#inbox-icon {
+.side-menu-links:hover {
+    background-image: linear-gradient(to bottom right, rgba(179, 179, 179, 0.455), rgba(207, 207, 207, 0.444));
+    transition: opacity 0.4s;
+}
+
+.side-menu-links:hover > .side-menu-links-left-container {
+    color: black;
+    font-weight: 200;
+    transition: 0.4s;
+}
+
+.side-menu-links:hover > .side-menu-links-right-container {
+    color: rgb(69, 69, 69);
+    font-weight: 300;
+    transition: 0.4s;
+}
+
+#all-icon {
+    margin-right: 10px;
     height: 16px;
     width: 14.5px;
-    margin-right: 10px;
     border: 1.5px solid dodgerblue;
     border-bottom: 4px solid dodgerblue;
     border-radius: 2px;
 }
 
-#inbox-icon-left-flange {
+#all-icon-left-flange {
     position: relative;
     top: 8px;
     left: -1px;
@@ -53,7 +77,7 @@
     border-radius: .5px;
 }
 
-#inbox-icon-right-flange {
+#all-icon-right-flange {
     position: relative;
     top: 5px;
     right: -7.5px;
@@ -68,17 +92,19 @@
     font-family: sans-serif;
     font-size: 9px;
     font-weight: 700;
-    padding: 0 3.5px;
+    text-align: center;
     margin-right: 10px;
+    height: 16px;
+    width: 14.5px;
     border: 1.5px solid green;
     border-top: 4px solid green;
     border-radius: 2px;
 }
 
 #upcoming-icon {
+    margin-right: 10px;
     height: 16px;
     width: 14.5px;
-    margin-right: 10px;
     border: 1.5px solid purple;
     border-top: 4px solid purple;
     border-radius: 2px;
@@ -92,53 +118,75 @@
     margin-right: 10px;
 }
 
-#projects-label {
+#favorites-icon {
+    background-image: url('./favorites.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    margin-right: 10px;
+    height: 16px;
+    width: 14.5px;
+}
+
+#projects-section-header {
     display: flex;
     align-items: center;
     font-size: 1.1rem;
+    font-weight: 200;
     padding: 9px 0 9px 20px;
     margin: 2px 5px;
     border-radius: 2px;
     cursor: pointer;
 }
 
-#projects-label:hover {
-    background-color: rgb(208, 208, 208);
+#projects-section-header:hover {
+    background-image: linear-gradient(to bottom right, rgba(179, 179, 179, 0.455), rgba(207, 207, 207, 0.444));
 }
 
-#dropdown-arrow {
+#projects-section-dropdown-arrow {
     margin-right: 10px;
 }
 
-.dropdown-bars {
+.projects-section-dropdown-bars {
     position: relative;
     bottom: 5px;
     display: inline-block;
     background-color: rgb(69, 69, 69);
-    height: 2px;
-    width: 7px;
+    height: 1px;
+    width: 5px;
 }
 
-#dropdown-bar1 {
+#projects-section-dropdown-bar1 {
     position: relative;
     left: 5px;
 }
 
-#dropdown-bar1 {
-    position: relative;
-    right: 5px;
-}
-
-#dropdown-bar1, #dropdown-bar2 {
+#projects-section-dropdown-bar1, #projects-section-dropdown-bar2 {
     transition: 0.4s;
 }
 
-.arrow-mode>#dropdown-bar1 {
+.project-section-dropdown-arrow-active > #projects-section-dropdown-bar1 {
     background-color: black;
     transform: rotate(30deg) translateX(.75px);
 }
 
-.arrow-mode>#dropdown-bar2 {
+.project-section-dropdown-arrow-active > #projects-section-dropdown-bar2 {
     background-color: black;
     transform: rotate(-30deg) translateX(-.75px);
+}
+
+.project-dropdown-menu {
+    position: absolute;
+    height: 250px;
+    width: 100%;
+    overflow: scroll;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-30px);
+    transition: 0.4s ease-in-out;
+}
+
+.project-dropdown-menu-active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
 }

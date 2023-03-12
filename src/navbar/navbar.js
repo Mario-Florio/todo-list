@@ -8,16 +8,38 @@ export const navbar = createHTML(`
 
 const hamburgerMenu = createHTML(`
     <div id="hamburger-menu">
-        <div class="bar" id="bar1"></div>
-        <div class="bar" id="bar2"></div>
-        <div class="bar" id="bar3"></div>
+        <div class="hamburger-menu-bar" id="bar1"></div>
+        <div class="hamburger-menu-bar" id="bar2"></div>
+        <div class="hamburger-menu-bar" id="bar3"></div>
     </div>
 `)
 
 const links = createHTML(`
     <div id="navbar-links">
-        <div class="navbar-links">Today</div>
-        <div class="navbar-links">Projects</div>
+        <div class="navbar-dropdown-menu-container">
+            <div class="navbar-links">Home</div>
+        </div>
+        <div class="navbar-dropdown-menu-container">
+            <div class="navbar-links">Projects</div>
+        </div>
+    </div>
+`)
+
+const navbarDropdown = createHTML(`
+    <div class="navbar-dropdown-menu">
+        <div class="navbar-dropdown-menu-links">All</div>
+        <div class="navbar-dropdown-menu-links">Today</div>
+        <div class="navbar-dropdown-menu-links">Upcoming</div>
+        <div class="navbar-dropdown-menu-links">Important</div>
+        <div class="navbar-dropdown-menu-links">Favorites</div>
+    </div>
+`)
+
+const navbarDropdown2 = createHTML(`
+    <div class="navbar-dropdown-menu">
+        <div class="navbar-dropdown-menu-links">Project 1</div>
+        <div class="navbar-dropdown-menu-links">Project 2</div>
+        <div class="navbar-dropdown-menu-links">Project 3</div>
     </div>
 `)
 
@@ -44,35 +66,72 @@ const accountIcon = createHTML(`
 `)
 
 const navbarContainerLeft = createHTML(`
-    <div class="navbar-container-left"></div>
+    <div class="navbar-left-container"></div>
 `)
 
 const navbarContainerRight = createHTML(`
-    <div class="navbar-container-right"></div>
+    <div class="navbar-right-container"></div>
 `)
 
+//Navbar
 navbar.appendChild(navbarContainerLeft)
 navbar.appendChild(navbarContainerRight)
+//Navbar Left Container
 navbarContainerLeft.appendChild(hamburgerMenu)
 navbarContainerLeft.appendChild(links)
+links.children[0].appendChild(navbarDropdown)
+links.children[1].appendChild(navbarDropdown2)
 navbarContainerLeft.appendChild(searchBar)
+//Navbar Right Container
 navbarContainerRight.appendChild (notificationBell)
 navbarContainerRight.appendChild(accountIcon)
 
 //Cache HTML
-const today = links.children[0]
-const projects = links.children[1]
+const home = links.children[0].children[0]
+const projects = links.children[1].children[0]
 
 //Bind Events
 hamburgerMenu.addEventListener('click', () => {
-    hamburgerMenu.classList.toggle('is-active')
+    hamburgerMenu.classList.toggle('hamburger-menu-active')
     sideMenu.classList.toggle('side-menu-active')
 })
 
-today.addEventListener('click', () => {
-    console.log('today')
+home.addEventListener('mouseenter', () => {
+    let dropdownMenu = home.parentNode.children[1]
+    dropdownMenu.classList.toggle('navbar-dropdown-menu-active')
 })
 
-projects.addEventListener('click', () => {
-    console.log('projects')
+home.addEventListener('mouseleave', () => {
+    let dropdownMenu = home.parentNode.children[1]
+    dropdownMenu.classList.toggle('navbar-dropdown-menu-active')
+})
+
+projects.addEventListener('mouseenter', () => {
+    let dropdownMenu = projects.parentNode.children[1]
+    dropdownMenu.classList.toggle('navbar-dropdown-menu-active')
+})
+
+projects.addEventListener('mouseleave', () => {
+    let dropdownMenu = projects.parentNode.children[1]
+    dropdownMenu.classList.toggle('navbar-dropdown-menu-active')
+})
+
+navbarDropdown.addEventListener('mouseenter', () => {
+    let dropdownMenu = event.target.parentNode.children[1]
+    dropdownMenu.classList.toggle('navbar-dropdown-menu-active')
+})
+
+navbarDropdown.addEventListener('mouseleave', () => {
+    let dropdownMenu = event.target.parentNode.children[1]
+    dropdownMenu.classList.toggle('navbar-dropdown-menu-active')
+})
+
+navbarDropdown2.addEventListener('mouseenter', () => {
+    let dropdownMenu = event.target.parentNode.children[1]
+    dropdownMenu.classList.toggle('navbar-dropdown-menu-active')
+})
+
+navbarDropdown2.addEventListener('mouseleave', () => {
+    let dropdownMenu = event.target.parentNode.children[1]
+    dropdownMenu.classList.toggle('navbar-dropdown-menu-active')
 })
