@@ -1,5 +1,6 @@
 
 .side-menu {
+    z-index: 1;
     position: absolute;
     left: -320px;
     height: 100dvh;
@@ -12,7 +13,7 @@
 }
 
 .side-menu, .side-menu-active {
-    transition: 0.5s;
+    transition: .4s ease-in-out;
 }
 
 #side-menu-main-links {
@@ -43,19 +44,16 @@
 
 .side-menu-links:hover {
     background-image: linear-gradient(to bottom right, rgba(179, 179, 179, 0.455), rgba(207, 207, 207, 0.444));
-    transition: opacity 0.4s;
 }
 
 .side-menu-links:hover > .side-menu-links-left-container {
     color: black;
     font-weight: 200;
-    transition: 0.4s;
 }
 
 .side-menu-links:hover > .side-menu-links-right-container {
     color: rgb(69, 69, 69);
     font-weight: 300;
-    transition: 0.4s;
 }
 
 #all-icon {
