@@ -1,4 +1,9 @@
 
+.todo-ticket-container {
+    height: 400px;
+    overflow: scroll;
+}
+
 .todo-ticket {
     display: flex;
     justify-content: space-between;
@@ -18,12 +23,45 @@
 
 .todo-ticket-left-container > input {
     margin: 0 1em;
+    cursor: pointer;
 }
 
 .todo-ticket-left-container > div {
     font-weight: 200;
     margin: 0 1em;
 }
+
+.todo-ticket-task {
+    width: 50dvw;
+    overflow: hidden;
+    word-wrap: break-word;
+}
+
+.todo-ticket-priority {
+    display: none;
+    color: red;
+    font-weight: 600;
+    margin-right: 10px;
+}
+
+.todo-ticket-priority-active {
+    display: inherit;
+}
+
+.todo-ticket-favorite {
+    display: none;
+    background-image: url('./favorites.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    margin-right: 10px;
+    height: 16px;
+    width: 14.5px;
+}
+
+.todo-ticket-favorite-active {
+    display: inherit;
+}
+
 .todo-ticket-date {
     color: rgb(69, 69, 69);
     font-size: .8rem;
@@ -31,7 +69,153 @@
 }
 
 .todo-ticket-project {
+    display: none;
     color: rgb(69, 69, 69);
     font-size: .8rem;
     font-weight: 200;
+    text-align: end;
+}
+
+.todo-ticket-project-active {
+    display: inherit;
+}
+
+@keyframes append-animate {
+	from {
+        transform: translateY(45px);
+		opacity: 0;
+	}
+	to {
+		transform: translateY(0);
+		opacity: 1;	
+	}
+}
+
+.new-todo-ticket {
+	animation: append-animate .4s ease-in;
+}
+
+@keyframes remove-animate {
+	to {
+		opacity: 0;	
+	}
+}
+
+.remove-todo-ticket {
+	animation: remove-animate .5s ease-in-out;
+}
+
+/* Add Todo Ticket */
+    /* Icon */
+
+#add-todo-form-ticket {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-top: .5px solid rgb(69, 69, 69);
+}
+
+.open-form-button-icon {
+    padding: 5px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.open-form-button-icon:hover, .open-form-button-pressed {
+    background-image: linear-gradient(to bottom right, rgb(231, 231, 231), rgb(241, 241, 241));
+}
+
+.open-form-button-bar1 {
+    position: relative;
+    left: 9.5px;
+    background-color: black;
+    height: 20px;
+    width: 1px;
+}
+
+.open-form-button-bar2 {
+    position: relative;
+    bottom: 10px;
+    background-color: black;
+    height: 1px;
+    width: 20px;
+}
+
+    /* Form */
+
+.add-todo-form {
+    width: 90%;
+}
+
+.add-todo-form-required {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0;
+    border: none;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.4s ease-in-out;   
+}
+
+.add-todo-form-required-active {
+    font-size: inherit;
+    opacity: 1;
+    pointer-events: inherit;
+    transition: 0.4s ease-in-out;   
+}
+
+.add-todo-form-task-input {
+    font-size: .9;
+    background: transparent;
+    width: 75%;
+    outline: none;
+    border: none;
+}
+
+.add-todo-form-task-input::placeholder {
+    font-weight: 200;
+}
+
+.add-todo-form-button {
+    font-size: .7rem;
+    font-weight: 300;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.add-todo-form-optional {
+    display: flex;
+    justify-content: start;
+    border: none;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(50px);
+    transition: 0.4s ease-in-out;
+}
+
+.add-todo-form-optional-active {
+    opacity: 1;
+    pointer-events: inherit;
+    transform: translateY(0);
+    transition: 0.2s ease-in-out;
+    transition-delay: 0.2s;
+}
+
+.add-todo-form-optional > input {
+    font-weight: 200;
+    background: transparent;
+    max-width: 60px;
+    border: none;
+    outline: none;
+}
+
+.favorite-label {
+    background-image: url('./favorites-gray.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    margin-right: -2px;
+    height: 16px;
+    width: 14.5px;
 }

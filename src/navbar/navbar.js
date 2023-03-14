@@ -25,7 +25,7 @@ const links = createHTML(`
     </div>
 `)
 
-const navbarDropdown = createHTML(`
+const homeDropdown = createHTML(`
     <div class="navbar-dropdown-menu">
         <div class="navbar-dropdown-menu-links">All</div>
         <div class="navbar-dropdown-menu-links">Today</div>
@@ -35,7 +35,7 @@ const navbarDropdown = createHTML(`
     </div>
 `)
 
-const navbarDropdown2 = createHTML(`
+const projectsDropdown = createHTML(`
     <div class="navbar-dropdown-menu">
         <div class="navbar-dropdown-menu-links">Project 1</div>
         <div class="navbar-dropdown-menu-links">Project 2</div>
@@ -45,12 +45,12 @@ const navbarDropdown2 = createHTML(`
 
 const searchBar = createHTML(`
     <form id="search-bar">
-        <button>
+        <div>
             <svg viewBox="0 0 24 24" width="16" height="16" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
                 <circle cx="11" cy="11" r="8"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
-        </button>
+        </div>
         <input placeholder="Search" type="search"/>
     </form>
 `)
@@ -73,17 +73,14 @@ const navbarContainerRight = createHTML(`
     <div class="navbar-right-container"></div>
 `)
 
-//Navbar
 navbar.appendChild(navbarContainerLeft)
 navbar.appendChild(navbarContainerRight)
-//Navbar Left Container
 navbarContainerLeft.appendChild(hamburgerMenu)
 navbarContainerLeft.appendChild(links)
-links.children[0].appendChild(navbarDropdown)
-links.children[1].appendChild(navbarDropdown2)
+links.children[0].appendChild(homeDropdown)
+links.children[1].appendChild(projectsDropdown)
 navbarContainerLeft.appendChild(searchBar)
-//Navbar Right Container
-navbarContainerRight.appendChild (notificationBell)
+navbarContainerRight.appendChild(notificationBell)
 navbarContainerRight.appendChild(accountIcon)
 
 //Cache HTML
@@ -95,7 +92,7 @@ hamburgerMenu.addEventListener('click', () => {
     hamburgerMenu.classList.toggle('hamburger-menu-active')
     sideMenu.classList.toggle('side-menu-active')
 })
-
+    //Hover effect
 home.addEventListener('mouseenter', () => {
     let dropdownMenu = home.parentNode.children[1]
     dropdownMenu.classList.toggle('navbar-dropdown-menu-active')
@@ -116,22 +113,22 @@ projects.addEventListener('mouseleave', () => {
     dropdownMenu.classList.toggle('navbar-dropdown-menu-active')
 })
 
-navbarDropdown.addEventListener('mouseenter', () => {
+homeDropdown.addEventListener('mouseenter', () => {
     let dropdownMenu = event.target.parentNode.children[1]
     dropdownMenu.classList.toggle('navbar-dropdown-menu-active')
 })
 
-navbarDropdown.addEventListener('mouseleave', () => {
+homeDropdown.addEventListener('mouseleave', () => {
     let dropdownMenu = event.target.parentNode.children[1]
     dropdownMenu.classList.toggle('navbar-dropdown-menu-active')
 })
 
-navbarDropdown2.addEventListener('mouseenter', () => {
+projectsDropdown.addEventListener('mouseenter', () => {
     let dropdownMenu = event.target.parentNode.children[1]
     dropdownMenu.classList.toggle('navbar-dropdown-menu-active')
 })
 
-navbarDropdown2.addEventListener('mouseleave', () => {
+projectsDropdown.addEventListener('mouseleave', () => {
     let dropdownMenu = event.target.parentNode.children[1]
     dropdownMenu.classList.toggle('navbar-dropdown-menu-active')
 })
