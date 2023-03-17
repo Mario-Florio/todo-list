@@ -1,4 +1,9 @@
-import { allQuantity } from './side-menu/side-menu'
+
+//events: { hamburgerMenuToggled } 'navbar';
+//  { pageSelected } 'sidemenu', 'navbar', 'header'
+//  { todoCreated } 'todos'
+//  { todoDeleted, todoFormSubmited } 'todo-tickets'
+//  { todoListChanged } 'todos' 
 
 let events = {
     events: {},
@@ -24,9 +29,5 @@ let events = {
         }
     }
 }
-
-events.on('todoListChanged', function(todoList) {
-    allQuantity.textContent = todoList.length
-})
 
 export { events }

@@ -1,6 +1,6 @@
 import { createHTML } from '../global-functions'
+import { events } from '../pub-sub'
 import './navbar.css'
-import { sideMenu } from '../side-menu/side-menu'
 
 export const navbar = createHTML(`
     <div class="navbar"></div>
@@ -27,11 +27,11 @@ const links = createHTML(`
 
 const homeDropdown = createHTML(`
     <div class="navbar-dropdown-menu">
-        <div class="navbar-dropdown-menu-links">All</div>
-        <div class="navbar-dropdown-menu-links">Today</div>
-        <div class="navbar-dropdown-menu-links">Upcoming</div>
-        <div class="navbar-dropdown-menu-links">Important</div>
-        <div class="navbar-dropdown-menu-links">Favorites</div>
+        <div class="navbar-dropdown-menu-links" data-page="All">All</div>
+        <div class="navbar-dropdown-menu-links" data-page="Today">Today</div>
+        <div class="navbar-dropdown-menu-links" data-page="Upcoming">Upcoming</div>
+        <div class="navbar-dropdown-menu-links" data-page="Important">Important</div>
+        <div class="navbar-dropdown-menu-links" data-page="Favorites">Favorites</div>
     </div>
 `)
 
@@ -90,8 +90,15 @@ const projects = links.children[1].children[0]
 //Bind Events
 hamburgerMenu.addEventListener('click', () => {
     hamburgerMenu.classList.toggle('hamburger-menu-active')
-    sideMenu.classList.toggle('side-menu-active')
+    events.emit('hamburgerMenuToggled')
 })
+
+for (let link of homeDropdown.children) {
+    link.addEventListener('click', (e) => {
+        events.emit('pageSelected', e.target.dataset.page)
+    })
+}
+
     //Hover effect
 home.addEventListener('mouseenter', () => {
     let dropdownMenu = home.parentNode.children[1]

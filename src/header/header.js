@@ -1,14 +1,14 @@
 import { createHTML } from '../global-functions'
-import { todoList } from '../todos'
+import { events } from '../pub-sub'
 import './header.css'
 
 export const header = createHTML(`
     <div id="header">
-        <div class="slide" data-active>All</div>
-        <div class="slide">Today</div>
-        <div class="slide">Upcoming</div>
-        <div class="slide">Important</div>
-        <div class="slide">Favorites</div>
+        <div class="slide" data-page="All" data-active>All</div>
+        <div class="slide" data-page="Today">Today</div>
+        <div class="slide" data-page="Upcoming">Upcoming</div>
+        <div class="slide" data-page="Important">Important</div>
+        <div class="slide" data-page="Favorites">Favorites</div>
     </div>
 `)
 
@@ -18,37 +18,24 @@ const getActiveSlide = function() {
     const activeSlide = header.querySelector('[data-active]')
     return activeSlide
 }
-const all = links[0]
-const today = links[1]
-const upcoming = links[2]
-const important = links[3]
-const favorites = links[4]
 
 //Bind Events
-for (let i = 0; i < links.length; i++) {//Activate Animations
-    links[i].addEventListener('click', () => {
+for (let i = 0; i < links.length; i++) {//Activate animations (active slide has special css properties)
+    links[i].addEventListener('click', (e) => {
         let activeSlide = getActiveSlide()
         delete activeSlide.dataset.active
-        event.target.dataset.active = true  
+        e.target.dataset.active = true
+        events.emit('todoListSelected', links[i].dataset.page)
     })
 }
 
-all.addEventListener('click', () => {
-    console.log(all)
-})
-
-today.addEventListener('click', () => {
-    console.log(today)
-})
-
-upcoming.addEventListener('click', () => {
-    console.log(upcoming)
-})
-
-important.addEventListener('click', () => {
-    console.log(important)
-})
-
-favorites.addEventListener('click', () => {
-    console.log(favorites)
+events.on('pageSelected', function(data) {
+    let activeSlide = getActiveSlide()
+    delete activeSlide.dataset.active
+    for (let link of links) {
+        if (link.dataset.page === data) {
+            link.dataset.active = true
+            events.emit('todoListSelected', link.dataset.page)
+        }
+    }
 })

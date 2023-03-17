@@ -1,6 +1,3 @@
-import { formatDistance, addWeeks, addDays, subDays } from 'date-fns'
-
-let distanceBetweenDatesInRealWords = formatDistance(addWeeks(new Date(), 5), new Date(), { addSuffix: true })
 
 export function createHTML(html) {
     const template = document.createElement('template')

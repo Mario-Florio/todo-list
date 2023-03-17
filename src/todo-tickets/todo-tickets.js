@@ -1,39 +1,54 @@
 import { createHTML } from "../global-functions";
 import { events } from "../pub-sub";
-import { Todo, todoList } from "../todos"
+import { Todo, todoList } from "../todos";
+
 import "./todo-tickets.css"
 
 export const todoTicketsSection = createHTML(`
     <div class="todo-ticket-container"></div>
 `)
 
-function createTodoTicket(todo, todoIndex) {
-        const todoTicket = createHTML(`
-            <div class="todo-ticket">
-                <div class="todo-ticket-left-container">
-                    <input type="radio" class="todo-completed"/>
-                    <div>
-                        <div style="display: flex">
-                            <div class="todo-ticket-priority">!</div>
-                            <div class="todo-ticket-favorite"></div>
-                            <div></div>
-                            <div class="todo-ticket-task">${todo.task}</div>
-                        </div>
-                        <div class="todo-ticket-date">${todo.date} ${todo.time}</div>
+function createTodoTicket(todo) {
+    const todoTicket = createHTML(`
+        <div class="todo-ticket new-todo-ticket">
+            <div class="todo-ticket-left-container">
+                <input type="radio" class="todo-completed"/>
+                <div>
+                    <div style="display: flex">
+                        <div class="todo-ticket-priority">!</div>
+                        <div class="todo-ticket-favorite"></div>
+                        <div class="todo-ticket-task">${todo.task}</div>
                     </div>
-                </div>
-                <div class="todo-ticket-right-container">
-                    <div class="todo-ticket-project">Project Name</div>
+                    <div class="todo-ticket-date">${todo.date} ${todo.time}</div>
                 </div>
             </div>
-        `)
-        setPriorityIcon(todoTicket, todo)
-        setFavoriteIcon(todoTicket, todo)
-        bindTodoCompletedButtonEvent(todoTicket, todoIndex)
-        return todoTicket
+            <div class="todo-ticket-right-container">
+                <div class="todo-ticket-project">Project Name</div>
+            </div>
+        </div>
+    `)
+    setPriorityIcon(todoTicket, todo)
+    setFavoriteIcon(todoTicket, todo)
+    const todoCompletedButton = todoTicket.children[0].children[0]
+    todoCompletedButton.addEventListener('click', () => {
+        let ticket = todoCompletedButton.closest('.todo-ticket')
+        ticket.classList.add('remove-todo-ticket')//Animation
+        removeTicket(ticket)
+        todoList.forEach(item => {
+            if (todo.task === item.task 
+                && todo.date === item.date 
+                && todo.time === item.time 
+                && todo.priority === item.priority 
+                && todo.favorite === item.favorite) {
+                    todoList.splice(todoList.indexOf(item), 1)
+            }
+        })
+        events.emit('todoListChanged', todoList)
+    })
+    return todoTicket
 }
 
-const addTodoFormTicket = createHTML(`
+export const addTodoFormTicket = createHTML(`
     <div id="add-todo-form-ticket">
         <form class="add-todo-form">
             <fieldset class="add-todo-form-required">
@@ -41,8 +56,8 @@ const addTodoFormTicket = createHTML(`
                 <button class="add-todo-form-button">Add Task</button>
             </fieldset>
             <fieldset class="add-todo-form-optional">
-                <input class="add-todo-form-date-input" type="text" name="date" placeholder="Today"/>
-                <input class="add-todo-form-time-input" type="text" name="time" placeholder="9:00AM"/>
+                <input class="add-todo-form-date-input" type="text" name="date" placeholder="Date"/>
+                <input class="add-todo-form-time-input" type="text" name="time" placeholder="Time"/>
                 <div style="display: flex; align-items: center">
                     <label for="priority" style="margin-left: 4px">!</label>
                     <input class="add-todo-form-priority-input" name="priority" type="checkbox" value="important"/>
@@ -62,8 +77,9 @@ const addTodoFormTicket = createHTML(`
 
 todoTicketsSection.appendChild(addTodoFormTicket)
 
+
 //Cache HTML
-const openFormButton = addTodoFormTicket.children[1]
+const addTodoFormTicketButton = addTodoFormTicket.children[1]
 const addTodoForm = addTodoFormTicket.children[0]
 const addTodoFormRequiredFields = addTodoFormTicket.children[0].children[0]
 const addTodoFormTaskInput = addTodoForm.children[0].children[0]
@@ -75,51 +91,49 @@ const addTodoFormPriorityInput = addTodoFormOptionalFields.children[2].children[
 const addTodoFormFavoriteInput = addTodoFormOptionalFields.children[3].children[1]
 
 //Bind Events
-openFormButton.addEventListener('click', () => {
-    openFormButton.classList.toggle('open-form-button-pressed')
+events.on('displayTodoList', function(data) {
+    while (todoTicketsSection.children.length > 1) {
+        todoTicketsSection.removeChild(todoTicketsSection.firstChild)
+    }
+    data.forEach(todo => {
+        let todoTicket = createTodoTicket(todo, todo.index)
+        todoTicketsSection.insertBefore(todoTicket ,todoTicketsSection.lastChild)
+    })
+})
+
+addTodoFormTicketButton.addEventListener('click', () => {
+    addTodoFormTicketButton.classList.toggle('open-form-button-pressed')
     addTodoFormRequiredFields.classList.toggle('add-todo-form-required-active')
-    addTodoFormTaskInput.focus()
     addTodoFormOptionalFields.classList.toggle('add-todo-form-optional-active')
 })
 
 addTodoFormSubmitButton.addEventListener('click', (e) => {
     e.preventDefault()
-    const todo = new Todo(addTodoFormTaskInput.value,
-        addTodoFormDateInput.value, addTodoFormTimeInput.value)
-    getCheckboxValue(todo)
-    todoList.push(todo)
+    let newTodo = new Todo(addTodoFormTaskInput.value, addTodoFormDateInput.value, addTodoFormTimeInput.value)
+    if (addTodoFormPriorityInput.checked) {
+        newTodo.setPriority()
+    }
+    if (addTodoFormFavoriteInput.checked) {
+        newTodo.setFavorite()
+    }
+    todoList.push(newTodo)
     events.emit('todoListChanged', todoList)
-    const todoTicket = createTodoTicket(todo, todoList.indexOf(todo))
-    todoTicketsSection.insertBefore(todoTicket ,todoTicketsSection.lastChild)
+    let newTodoTicket = createTodoTicket(newTodo)
+    todoTicketsSection.insertBefore(newTodoTicket ,todoTicketsSection.lastChild)
     resetForm()
 })
 
-function bindTodoCompletedButtonEvent(todoTicket, todoIndex) {
-    todoTicket.classList.add('new-todo-ticket')
-    const todoCompletedButton = todoTicket.children[0].children[0]
-    todoCompletedButton.addEventListener('click', () => {
-        let ticket = todoCompletedButton.closest('.todo-ticket')
-        setTimeout(function() { ticket.classList.add('remove-todo-ticket') }, 2500)
-        setTimeout(function() { removeTicket(ticket), removeTodo(todoIndex), events.emit('todoListChanged', todoList) }, 3000)
-    })
-}
-
 //Utility
-function getCheckboxValue(todo) {
-    if (addTodoFormPriorityInput.checked) {
-        todo.setPriority()
-    }
-    if (addTodoFormFavoriteInput.checked) {
-        todo.setFavorite()
-    }
-}
-
 function resetForm() {
     addTodoFormTaskInput.value = ''
     addTodoFormDateInput.value = ''
     addTodoFormTimeInput.value = ''
     addTodoFormPriorityInput.checked = false
     addTodoFormFavoriteInput.checked = false
+}
+
+function removeTicket(ticket) {
+    todoTicketsSection.removeChild(ticket)
 }
 
 function setPriorityIcon(todoTicket, todo) {
@@ -134,12 +148,4 @@ function setFavoriteIcon(todoTicket, todo) {
     if (todo.favorite === true) {
         favoriteIconEl.classList.add('todo-ticket-favorite-active')
     }
-}
-
-function removeTodo(index) {
-    todoList.splice(index, 1)
-}
-
-function removeTicket(ticket) {
-    todoTicketsSection.removeChild(ticket)
 }

@@ -1,4 +1,5 @@
 import { createHTML } from '../global-functions'
+import { events } from '../pub-sub'
 import './side-menu.css'
 
 export const sideMenu = createHTML(`
@@ -7,7 +8,7 @@ export const sideMenu = createHTML(`
 
 const mainLinks = createHTML(`
     <div class="side-menu-main-links">
-        <div class="side-menu-links">
+        <div class="side-menu-links" data-page="All">
             <div class="side-menu-links-left-container">
                 <div id="all-icon">
                     <div id="all-icon-left-flange"></div>
@@ -17,28 +18,28 @@ const mainLinks = createHTML(`
             </div>
             <div class="side-menu-links-right-container"></div>
         </div>
-        <div class="side-menu-links">
+        <div class="side-menu-links" data-page="Today">
             <div class="side-menu-links-left-container">
                 <div id="today-icon">9</div>
                 <div>Today</div>
             </div>
             <div class="side-menu-links-right-container"></div>
         </div>
-        <div class="side-menu-links">
+        <div class="side-menu-links" data-page="Upcoming">
             <div class="side-menu-links-left-container">
                 <div id="upcoming-icon"></div>
                 <div>Upcoming</div>
             </div>
             <div class="side-menu-links-right-container"></div>
         </div>
-        <div class="side-menu-links">
+        <div class="side-menu-links" data-page="Important">
             <div class="side-menu-links-left-container">
                 <div id="important-icon">!</div>
                 <div>Important</div>
             </div>
             <div class="side-menu-links-right-container"></div>
         </div>
-        <div class="side-menu-links">
+        <div class="side-menu-links" data-page="Favorites">
             <div class="side-menu-links-left-container">
                 <div id="favorites-icon"></div>
                 <div>Favorites</div>
@@ -76,31 +77,32 @@ sideMenu.appendChild(projectsSection)
 
 //Cache HTML
 const all = mainLinks.children[0]
-export const allQuantity = all.children[1]
+const allQuantity = all.children[1]
 const today = mainLinks.children[1]
 const upcoming = mainLinks.children[2]
 const important = mainLinks.children[3]
+const importantQuantity = important.children[1]
+const favorites = mainLinks.children[4]
+const favoritesQuantity = favorites.children[1]
 const projectsSectionButton = projectsSection.children[0]
 const dropdownArrow = projectsSectionButton.children[0]
 
 //Bind Events
-all.addEventListener('click', () => {
-    console.log('all')
+events.on('hamburgerMenuToggled', function() {
+    sideMenu.classList.toggle('side-menu-active')
 })
 
-today.addEventListener('click', () => {
-    console.log('today')
+events.on('todoListChanged', function(todoList) {
 })
 
-upcoming.addEventListener('click', () => {
-    console.log('upcoming')
-})
-
-important.addEventListener('click', () => {
-    console.log('important')
-})
+for (let link of mainLinks.children) {
+    link.addEventListener('click', (e) => {
+        events.emit('pageSelected', e.target.closest('.side-menu-links').dataset.page)
+    })
+}
 
 projectsSectionButton.addEventListener('click', () => {
     dropdownArrow.classList.toggle('project-section-dropdown-arrow-active')
     projectsSection.children[1].classList.toggle('project-dropdown-menu-active')
 })
+
