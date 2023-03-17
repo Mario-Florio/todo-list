@@ -93,6 +93,31 @@ events.on('hamburgerMenuToggled', function() {
 })
 
 events.on('todoListChanged', function(todoList) {
+    let importantTodos = todoList.filter(todo => {
+        if (todo.priority) {
+            return todo
+        }
+    })
+    let favoriteTodos = todoList.filter(todo => {
+        if (todo.favorite) {
+            return todo
+        }
+    })
+    if (todoList.length > 0) {
+        allQuantity.textContent = todoList.length
+    } else {
+        allQuantity.textContent = ''
+    }
+    if (importantTodos.length > 0) {
+        importantQuantity.textContent = importantTodos.length
+    } else {
+        importantQuantity.textContent = ''
+    }
+    if (favoriteTodos.length > 0) {
+        favoritesQuantity.textContent = favoriteTodos.length
+    } else {
+        favoritesQuantity.textContent = ''
+    }
 })
 
 for (let link of mainLinks.children) {
