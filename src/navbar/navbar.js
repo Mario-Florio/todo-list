@@ -37,9 +37,7 @@ const homeDropdown = createHTML(`
 
 const projectsDropdown = createHTML(`
     <div class="navbar-dropdown-menu">
-        <div class="navbar-dropdown-menu-links">Project 1</div>
-        <div class="navbar-dropdown-menu-links">Project 2</div>
-        <div class="navbar-dropdown-menu-links">Project 3</div>
+        <div class="navbar-dropdown-menu-links">Project +</div>
     </div>
 `)
 
@@ -95,7 +93,8 @@ hamburgerMenu.addEventListener('click', () => {
 
 for (let link of homeDropdown.children) {
     link.addEventListener('click', (e) => {
-        events.emit('pageSelected', e.target.dataset.page)
+        let selectedPage = e.target.dataset.page
+        events.emit('pageSelected', selectedPage)
     })
 }
 

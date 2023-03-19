@@ -20,7 +20,7 @@ const getActiveSlide = function() {
 }
 
 //Bind Events
-for (let i = 0; i < links.length; i++) {//Activate animations (active slide has special css properties)
+for (let i = 0; i < links.length; i++) {//Refactor for readability?
     links[i].addEventListener('click', (e) => {
         let activeSlide = getActiveSlide()
         delete activeSlide.dataset.active
@@ -29,13 +29,14 @@ for (let i = 0; i < links.length; i++) {//Activate animations (active slide has 
     })
 }
 
-events.on('pageSelected', function(data) {
+events.on('pageSelected', function(selectedPage) {
     let activeSlide = getActiveSlide()
     delete activeSlide.dataset.active
     for (let link of links) {
-        if (link.dataset.page === data) {
+        if (link.dataset.page === selectedPage) {
+            let selectedTodoList = link.dataset.page
             link.dataset.active = true
-            events.emit('todoListSelected', link.dataset.page)
+            events.emit('todoListSelected', selectedTodoList)
         }
     }
 })

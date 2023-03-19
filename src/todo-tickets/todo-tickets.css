@@ -1,4 +1,3 @@
-
 .todo-ticket-container {
     height: 400px;
     overflow: scroll;
@@ -82,7 +81,7 @@
 
 @keyframes append-animate {
 	from {
-        transform: translateY(45px);
+        transform: translateY(35px);
 		opacity: 0;
 	}
 	to {
@@ -113,6 +112,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
+    width: 100dvw;
     border-top: .5px solid rgb(69, 69, 69);
 }
 
@@ -143,9 +143,8 @@
 }
 
     /* Form */
-
 .add-todo-form {
-    width: 90%;
+    width: 100%;
 }
 
 .add-todo-form-required {

@@ -1,3 +1,4 @@
+import { isToday } from 'date-fns'
 import { createHTML } from '../global-functions'
 import { events } from '../pub-sub'
 import './side-menu.css'
@@ -20,7 +21,7 @@ const mainLinks = createHTML(`
         </div>
         <div class="side-menu-links" data-page="Today">
             <div class="side-menu-links-left-container">
-                <div id="today-icon">9</div>
+                <div id="today-icon"></div>
                 <div>Today</div>
             </div>
             <div class="side-menu-links-right-container"></div>
@@ -66,7 +67,7 @@ function createProjectLink() {
     let projectLink = createHTML(`
         <div class="project-links">
             <div class="side-menu-links">
-                <div class="side-menu-links-left-container">${projects[i].name}</div>
+                <div class="side-menu-links-left-container"></div>
             </div>
         </div>
     `)
@@ -79,7 +80,10 @@ sideMenu.appendChild(projectsSection)
 const all = mainLinks.children[0]
 const allQuantity = all.children[1]
 const today = mainLinks.children[1]
+const todayIcon = today.children[0].children[0]
+const todayQuantity = today.children[1]
 const upcoming = mainLinks.children[2]
+const upcomingQuantity = upcoming.children[1]
 const important = mainLinks.children[3]
 const importantQuantity = important.children[1]
 const favorites = mainLinks.children[4]
@@ -88,41 +92,10 @@ const projectsSectionButton = projectsSection.children[0]
 const dropdownArrow = projectsSectionButton.children[0]
 
 //Bind Events
-events.on('hamburgerMenuToggled', function() {
-    sideMenu.classList.toggle('side-menu-active')
-})
-
-events.on('todoListChanged', function(todoList) {
-    let importantTodos = todoList.filter(todo => {
-        if (todo.priority) {
-            return todo
-        }
-    })
-    let favoriteTodos = todoList.filter(todo => {
-        if (todo.favorite) {
-            return todo
-        }
-    })
-    if (todoList.length > 0) {
-        allQuantity.textContent = todoList.length
-    } else {
-        allQuantity.textContent = ''
-    }
-    if (importantTodos.length > 0) {
-        importantQuantity.textContent = importantTodos.length
-    } else {
-        importantQuantity.textContent = ''
-    }
-    if (favoriteTodos.length > 0) {
-        favoritesQuantity.textContent = favoriteTodos.length
-    } else {
-        favoritesQuantity.textContent = ''
-    }
-})
-
 for (let link of mainLinks.children) {
     link.addEventListener('click', (e) => {
-        events.emit('pageSelected', e.target.closest('.side-menu-links').dataset.page)
+        let selectedPage = e.target.closest('.side-menu-links').dataset.page
+        events.emit('pageSelected', selectedPage)
     })
 }
 
@@ -131,3 +104,45 @@ projectsSectionButton.addEventListener('click', () => {
     projectsSection.children[1].classList.toggle('project-dropdown-menu-active')
 })
 
+events.on('hamburgerMenuToggled', function() {
+    sideMenu.classList.toggle('side-menu-active')
+})
+
+events.on('setDate', function(todaysDate) {
+    todayIcon.textContent = todaysDate
+})
+
+function test() {
+    let string = 'string'
+    return string
+}
+
+console.log(test().length > 0)
+
+events.on('todoListChanged', function(todoList) {
+    if (todoList.all.length > 0) {
+        allQuantity.textContent = todoList.all.length
+    } else {
+        allQuantity.textContent = ''
+    }
+    if (todoList.upcoming().length > 0) {
+        upcomingQuantity.textContent = todoList.upcoming().length
+    } else {
+        upcomingQuantity.textContent = ''
+    }
+    if (todoList.dueToday().length > 0) {
+        todayQuantity.textContent = todoList.dueToday().length
+    } else {
+        todayQuantity.textContent = ''
+    }
+    if (todoList.important().length > 0) {
+        importantQuantity.textContent = todoList.important().length
+    } else {
+        importantQuantity.textContent = ''
+    }
+    if (todoList.favorites().length > 0) {
+        favoritesQuantity.textContent = todoList.favorites().length
+    } else {
+        favoritesQuantity.textContent = ''
+    }
+})
