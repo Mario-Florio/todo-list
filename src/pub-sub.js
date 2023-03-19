@@ -1,10 +1,4 @@
 
-//events: { hamburgerMenuToggled } 'navbar';
-//  { pageSelected } 'sidemenu', 'navbar', 'header'
-//  { todoCreated } 'todos'
-//  { todoDeleted, todoFormSubmited } 'todo-tickets'
-//  { todoListChanged } 'todos' 
-
 let events = {
     events: {},
     on: function (eventName, fn) {//subscribe

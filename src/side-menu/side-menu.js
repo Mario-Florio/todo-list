@@ -112,13 +112,6 @@ events.on('setDate', function(todaysDate) {
     todayIcon.textContent = todaysDate
 })
 
-function test() {
-    let string = 'string'
-    return string
-}
-
-console.log(test().length > 0)
-
 events.on('todoListChanged', function(todoList) {
     if (todoList.all.length > 0) {
         allQuantity.textContent = todoList.all.length

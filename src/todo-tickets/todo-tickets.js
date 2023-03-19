@@ -27,8 +27,8 @@ function createTodoTicket(todoData) {//Refactor?
     `)
     setPriorityIcon(todoTicket, todoData)
     setFavoriteIcon(todoTicket, todoData)
-    const todoCompletedButton = todoTicket.children[0].children[0]//Work this into Cache HTML section
-    todoCompletedButton.addEventListener('click', () => {//Work this into Bind Events section
+    const todoCompletedButton = todoTicket.children[0].children[0]//Work this into "Cache HTML" section
+    todoCompletedButton.addEventListener('click', () => {//Work this into "Bind Events" section
         let ticket = todoCompletedButton.closest('.todo-ticket')
         ticket.classList.add('remove-todo-ticket')
         setTimeout(function() {todoTicketsSection.removeChild(ticket), events.emit('todoTicketDeleted', todoData)}, 500)
@@ -83,7 +83,7 @@ events.on('displayTodoList', function(todoList) {//Refactor?
         todoTicketsSection.removeChild(todoTicketsSection.firstChild)
     }
     todoList.forEach(todo => {
-        let todoTicket = createTodoTicket(todo, todo.index)
+        let todoTicket = createTodoTicket(todo)
         todoTicketsSection.insertBefore(todoTicket ,todoTicketsSection.lastChild)
     })
 })
@@ -97,9 +97,9 @@ addTodoFormTicketButton.addEventListener('click', () => {
 addTodoFormSubmitButton.addEventListener('click', (e) => {
     e.preventDefault()
     let newTodoData = {
-        task: addTodoFormTaskInput.value,
-        date: addTodoFormDateInput.value,
-        time: addTodoFormTimeInput.value,
+        task: addTodoFormTaskInput.value.trim(),
+        date: addTodoFormDateInput.value.toLowerCase().trim(),
+        time: addTodoFormTimeInput.value.trim(),
         priority: addTodoFormPriorityInput.checked,
         favorite: addTodoFormFavoriteInput.checked
     }
