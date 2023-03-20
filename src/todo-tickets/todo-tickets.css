@@ -4,9 +4,6 @@
     overflow: scroll;
 }
 
-.todo-ticket-container {
-}
-
 .todo-ticket {
     display: flex;
     justify-content: space-between;
@@ -76,6 +73,10 @@
     font-size: .8rem;
     font-weight: 200;
     text-align: end;
+    width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 @keyframes append-animate {

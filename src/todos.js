@@ -89,6 +89,8 @@ class Project extends TodoList {
     }
 }
 
+const projects = []
+
 //Bind Events
 window.addEventListener('load', () => {
     let todaysDate = format(new Date(), 'd')

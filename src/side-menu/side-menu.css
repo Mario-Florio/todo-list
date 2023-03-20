@@ -34,6 +34,9 @@
     display: flex;
     font-size: 14px;
     font-weight: 200;
+    width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .side-menu-links-right-container {
     color: rgb(141, 141, 141);
