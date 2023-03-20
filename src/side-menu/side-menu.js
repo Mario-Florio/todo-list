@@ -1,4 +1,3 @@
-import { isToday } from 'date-fns'
 import { createHTML } from '../global-functions'
 import { events } from '../pub-sub'
 import './side-menu.css'
@@ -59,37 +58,49 @@ const projectsSection = createHTML(`
             </div>
             <div>Projects</div>
         </div>
-        <div class="project-dropdown-menu"></div>
+        <div class="project-dropdown-menu">
+            <div class="project-links">
+                <form class="add-project-form">
+                    <div class="side-menu-links-left-container">
+                        <input id="project-input" type="text" name="project-name" placeholder="Project"/>
+                    </div>
+                    <button id="add-project-button">
+                        <div class="add-project-button-bar1"></div>
+                        <div class="add-project-button-bar2"></div>
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
 `)
 
-function createProjectLink() {
+function createProjectLink(project) {
     let projectLink = createHTML(`
         <div class="project-links">
             <div class="side-menu-links">
-                <div class="side-menu-links-left-container"></div>
+                <div class="side-menu-links-left-container">${project.name}</div>
+                <div class="side-menu-links-right-container">${project.all.length}</div>
             </div>
         </div>
     `)
+    return projectLink
 }
 
 sideMenu.appendChild(mainLinks)
 sideMenu.appendChild(projectsSection)
 
 //Cache HTML
-const all = mainLinks.children[0]
-const allQuantity = all.children[1]
-const today = mainLinks.children[1]
-const todayIcon = today.children[0].children[0]
-const todayQuantity = today.children[1]
-const upcoming = mainLinks.children[2]
-const upcomingQuantity = upcoming.children[1]
-const important = mainLinks.children[3]
-const importantQuantity = important.children[1]
-const favorites = mainLinks.children[4]
-const favoritesQuantity = favorites.children[1]
-const projectsSectionButton = projectsSection.children[0]
-const dropdownArrow = projectsSectionButton.children[0]
+const allQuantity = mainLinks.children[0].children[1]
+const todayIcon = mainLinks.children[1].children[0].children[0]
+const todayQuantity = mainLinks.children[1].children[1]
+const upcomingQuantity = mainLinks.children[2].children[1]
+const importantQuantity = mainLinks.children[3].children[1]
+const favoritesQuantity = mainLinks.children[4].children[1]
+const projectsSectionHeader = projectsSection.children[0]
+const dropdownArrow = projectsSection.children[0].children[0]
+const projectLinks = projectsSection.children[1].children[0]
+const addProjectInput = projectsSection.children[1].children[0].children[0].children[0].children[0]
+const addProjectButton = projectsSection.children[1].children[0].children[0].children[1]
 
 //Bind Events
 for (let link of mainLinks.children) {
@@ -99,11 +110,6 @@ for (let link of mainLinks.children) {
     })
 }
 
-projectsSectionButton.addEventListener('click', () => {
-    dropdownArrow.classList.toggle('project-section-dropdown-arrow-active')
-    projectsSection.children[1].classList.toggle('project-dropdown-menu-active')
-})
-
 events.on('hamburgerMenuToggled', function() {
     sideMenu.classList.toggle('side-menu-active')
 })
@@ -112,7 +118,27 @@ events.on('setDate', function(todaysDate) {
     todayIcon.textContent = todaysDate
 })
 
-events.on('todoListChanged', function(todoList) {
+projectsSectionHeader.addEventListener('click', () => {
+    dropdownArrow.classList.toggle('project-section-dropdown-arrow-active')
+    projectsSection.children[1].classList.toggle('project-dropdown-menu-active')
+})
+
+addProjectButton.addEventListener('click', (e) => {
+    e.preventDefault()
+    if (addProjectInput.value !== '') {
+        let newProjectName = addProjectInput.value
+        addProjectInput.value = ''
+        events.emit('projectSubmitted', newProjectName)
+    }
+})
+
+events.on('projectCreated', function(newProject) {
+    let newProjectLink = createProjectLink(newProject)
+    newProjectLink.classList.toggle('new-project-link')
+    projectLinks.insertBefore(newProjectLink, projectLinks.lastElementChild)
+})
+
+events.on('todoListChanged', function(todoList) {//Refactor
     if (todoList.all.length > 0) {
         allQuantity.textContent = todoList.all.length
     } else {

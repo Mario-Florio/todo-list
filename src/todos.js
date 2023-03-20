@@ -1,4 +1,4 @@
-import { format, isToday, endOfHour, addSeconds, isValid, isThisWeek, startOfDay, addDays, isSunday, isMonday, isTuesday, isWednesday, isThursday, isFriday, isSaturday } from 'date-fns'
+import { format, isToday, isPast, endOfHour, addSeconds, isValid, isThisWeek, startOfDay, addDays, isSunday, isMonday, isTuesday, isWednesday, isThursday, isFriday, isSaturday } from 'date-fns'
 import { events } from './pub-sub'
 
 class TodoList {
@@ -15,12 +15,12 @@ class TodoList {
         return dueToday
     }
     upcoming() {
-        let upcoming = [...todoList.all].sort((a, b) => 
+        let upcoming = [...this.all].sort((a, b) => 
             new Date(`${a.date} ${a.time}`) > new Date(`${b.date} ${b.time}`) ? 1 : -1)
         return upcoming
     }
     important() {
-        let importantTodos = todoList.all.filter(todo => {
+        let importantTodos = this.all.filter(todo => {
             if (todo.priority) {
                 return todo
             }
@@ -28,7 +28,7 @@ class TodoList {
         return importantTodos
     }
     favorites() {
-        let favoriteTodos = todoList.all.filter(todo => {
+        let favoriteTodos = this.all.filter(todo => {
             if (todo.favorite) {
                 return todo
             }
@@ -58,6 +58,35 @@ export class Todo {
     removeFavorite() {
         delete this.favorite
     }
+    pastDue() {//Refactor?
+        if (this.date === 'Today' && 
+                parseInt(format(new Date(`1/1/1111 ${this.time}`), 'H:mm')) < parseInt(format(new Date(), 'H:mm')) ||
+                (parseInt(format(new Date(`1/1/1111 ${this.time}`), 'H:mm')) === parseInt(format(new Date(), 'H:mm')) &&
+                 parseInt(format(new Date(`1/1/1111 ${this.time}`), 'mm')) < parseInt(format(new Date(), 'mm')))) {
+            return true
+        }
+        return isPast(new Date(`${this.date} ${this.time}`))
+    }
+    addToProject(project) {
+        project.all.push(this)
+    }
+}
+
+class Project extends TodoList {
+    constructor(name) {
+        super()
+        this.name = name
+    }
+    addTodo(todo) {
+        this.all.push(todo)
+    }
+    removeTodo(todoToRemove) {
+        this.all.filter(todo => {
+            if (todo.id === todoToRemove.id) {
+                this.all.splice(this.all.indexOf(todo), 1)
+            }
+        })
+    }
 }
 
 //Bind Events
@@ -66,8 +95,9 @@ window.addEventListener('load', () => {
     events.emit('setDate', todaysDate)
 })
 
+    //Todos
 events.on('todoSubmited', function(newTodoData) {
-    newTodoData.id = new Date() //Date serves as unique Id
+    newTodoData.id = format(new Date(), 'MM/dd/yyyy HH:mm:ss:SSSS') //Date serves as unique Id
     if (newTodoData.date === '') {
         newTodoData.date = format(new Date(), 'M/d/yyyy')
     } else {
@@ -94,13 +124,38 @@ events.on('todoSubmited', function(newTodoData) {
     let dateTime = new Date(`${newTodoData.date} ${newTodoData.time}`)
     newTodoData.date = format(new Date(dateTime), 'M/d/yyyy')
     newTodoData.time = format(new Date(dateTime), 'h:mm a')
-    events.emit('date&timeParsed', newTodoData)
+    events.emit('date&timeInputParsed', newTodoData)
 })
 
-events.on('date&timeParsed', function(newTodoData) {
-    let newTodo = createTodo(newTodoData)
+events.on('date&timeInputParsed', function(newTodoData) {
+    let newTodo = new Todo(newTodoData.task, newTodoData.date, newTodoData.time, newTodoData.id)
+    if (newTodoData.priority === true) {
+        newTodo.setPriority()
+    }
+    if (newTodoData.favorite === true) {
+        newTodo.setFavorite()
+    }
+    (function validateProjectInput() {
+        if (newTodoData.project !== '') {
+            for (let i = 0; i < projects.length; i++) {
+               if (newTodoData.project === projects[i].name) {
+                    newTodo.project = newTodoData.project
+                    projects[i].addTodo(newTodo)
+                    return
+                }
+            }
+            newTodo.project = newTodoData.project
+            let newProject = new Project(newTodoData.project)
+            newProject.id = format(new Date(), 'm/d/yyyy HH:mm:ss:SSSS')
+            newProject.addTodo(newTodo)
+            projects.push(newProject)
+            events.emit('projectCreated', newProject)
+        } else {
+            newTodo.project = newTodoData.project
+        }
+    })()
     todoList.all.push(newTodo)
-    let newTodoClone = createTodo(newTodo)
+    let newTodoClone = cloneTodo(newTodo)
     newTodoClone.date = convertData(newTodoData.date)
     events.emit('todoListChanged', todoList)
     events.emit('todoCreated', newTodoClone)
@@ -115,41 +170,75 @@ events.on('todoTicketDeleted', function(todoTicketData) {
     events.emit('todoListChanged', todoList)
 })
 
-events.on('todoListSelected', function(selectedTodoList) {
+events.on('todoListSelected', function(selectedTodoList) {//Refactor?
+    let todoListClone = cloneTodoList(todoList)
+    function cloneTodoList(todoList) {
+        let todoListClone = new TodoList
+        todoList.all.forEach(todo => {
+            let todoClone = cloneTodo(todo)
+            todoListClone.all.push(todoClone)
+        })
+        return todoListClone
+    }
     if (selectedTodoList === 'All') {
-        let all = [...todoList.all]//Only shallow copy; still refernces same objects
-        all.forEach(todo =>
-            todo.date = convertData(todo.date))
-        events.emit('displayTodoList', all)
+        todoListClone.all.forEach(todo => {
+            todo.date = convertData(todo.date)
+        })
+        events.emit('displayTodoList', todoListClone.all)
     }
     if (selectedTodoList === 'Today') {
-        events.emit('displayTodoList', todoList.dueToday())
+        let dueToday = todoListClone.dueToday()
+        dueToday.forEach(todo => {
+            todo.date = convertData(todo.date)
+        })
+        events.emit('displayTodoList', dueToday)
     }
     if (selectedTodoList === 'Upcoming') {
-        events.emit('displayTodoList', todoList.upcoming())
+        let upcoming = todoListClone.upcoming()
+        upcoming.forEach(todo => {
+            todo.date = convertData(todo.date)
+        })
+        events.emit('displayTodoList', upcoming)
     }
     if (selectedTodoList === 'Important') {
-        events.emit('displayTodoList', todoList.important())
+        let important = todoListClone.important()
+        important.forEach(todo => {
+            todo.date = convertData(todo.date)
+        })
+        events.emit('displayTodoList', important)
     }
     if (selectedTodoList === 'Favorites') {
-        events.emit('displayTodoList', todoList.favorites())
+        let favorites = todoListClone.favorites()
+        favorites.forEach(todo => {
+            todo.date = convertData(todo.date)
+        })
+        events.emit('displayTodoList', favorites)
     }
 })
 
-let all = [...todoList.all]
-        all.forEach(todo =>
-            todo.date = convertData(todo.date))
-        events.emit('displayTodoList', all)
+    //Projects
+events.on('projectSubmitted', function(projectName) {
+    for (let i = 0; i < projects.length; i++) {
+        if (projectName === projects[i].name) {
+            return
+        }
+    }
+    let newProject = new Project(projectName)
+    newProject.id = format(new Date(), 'm/d/yyyy HH:mm:ss:SSSS')
+    projects.push(newProject)
+    events.emit('projectCreated', newProject)
+})
 
 //Utility
-function createTodo(todo) {
-    let todoClone = new Todo(todo.task, todo.date, todo.time)
+function cloneTodo(todo) {
+    let todoClone = new Todo(todo.task, todo.date, todo.time, todo.id)
     if (todo.priority === true) {
         todoClone.setPriority()
     }
     if (todo.favorite === true) {
         todoClone.setFavorite()
     }
+    todoClone.project = todo.project
     return todoClone
 }
 
@@ -178,9 +267,10 @@ function convertData(data) {
     if (isThisWeek(new Date(data)) && isSaturday(new Date(data))) {
         return 'Saturday'
     }
+    return data
 }
 
-function inputConverter(input) {
+function inputConverter(input) {//Refactor?
     if (input === 'today') {
         return format(new Date(), 'M/d/yyyy')
     }
@@ -243,4 +333,5 @@ function inputConverter(input) {
             }
         }
     }
+    return input
 }

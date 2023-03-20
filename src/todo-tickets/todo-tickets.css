@@ -1,6 +1,10 @@
-.todo-ticket-container {
-    height: 400px;
+
+.todo-ticket-section {
+    height: 450px;
     overflow: scroll;
+}
+
+.todo-ticket-container {
 }
 
 .todo-ticket {
@@ -68,15 +72,10 @@
 }
 
 .todo-ticket-project {
-    display: none;
     color: rgb(69, 69, 69);
     font-size: .8rem;
     font-weight: 200;
     text-align: end;
-}
-
-.todo-ticket-project-active {
-    display: inherit;
 }
 
 @keyframes append-animate {
@@ -108,9 +107,12 @@
     /* Icon */
 
 #add-todo-form-ticket {
+    position: sticky;
+    bottom: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-color: whitesmoke;
     padding: 1rem;
     width: 100dvw;
     border-top: .5px solid rgb(69, 69, 69);

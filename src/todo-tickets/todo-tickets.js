@@ -2,8 +2,12 @@ import { createHTML } from "../global-functions";
 import { events } from "../pub-sub";
 import "./todo-tickets.css"
 
-export const todoTicketsSection = createHTML(`
-    <div class="todo-ticket-container"><div>
+export const todoTicketSection = createHTML(`
+    <div class="todo-ticket-section"></div>
+`)
+
+const todoTicketContainer = createHTML(`
+    <div class="todo-ticket-container"></div>
 `)
 
 function createTodoTicket(todoData) {//Refactor?
@@ -21,17 +25,21 @@ function createTodoTicket(todoData) {//Refactor?
                 </div>
             </div>
             <div class="todo-ticket-right-container">
-                <div class="todo-ticket-project">Project Name</div>
+                <div class="todo-ticket-project">${todoData.project}</div>
             </div>
         </div>
     `)
     setPriorityIcon(todoTicket, todoData)
     setFavoriteIcon(todoTicket, todoData)
-    const todoCompletedButton = todoTicket.children[0].children[0]//Work this into "Cache HTML" section
-    todoCompletedButton.addEventListener('click', () => {//Work this into "Bind Events" section
+    if (todoData.pastDue()) {
+        let todoTicketDate = todoTicket.children[0].children[1].children[1]
+        todoTicketDate.setAttribute('style', 'color: rgb(168, 0, 0); font-weight: 300')
+    }
+    const todoCompletedButton = todoTicket.children[0].children[0]//Work this into "Cache HTML" section?
+    todoCompletedButton.addEventListener('click', () => {//Work this into "Bind Events" section?
         let ticket = todoCompletedButton.closest('.todo-ticket')
         ticket.classList.add('remove-todo-ticket')
-        setTimeout(function() {todoTicketsSection.removeChild(ticket), events.emit('todoTicketDeleted', todoData)}, 500)
+        setTimeout(function() {todoTicketContainer.removeChild(ticket), events.emit('todoTicketDeleted', todoData)}, 500)
         })
     return todoTicket
 }
@@ -46,6 +54,7 @@ export const addTodoFormTicket = createHTML(`
             <fieldset class="add-todo-form-optional">
                 <input class="add-todo-form-date-input" type="text" name="date" placeholder="Today"/>
                 <input class="add-todo-form-time-input" type="text" name="time" placeholder="Time"/>
+                <input type="text" name="project" placeholder="Project"/>
                 <div style="display: flex; align-items: center">
                     <label for="priority" style="margin-left: 4px">!</label>
                     <input class="add-todo-form-priority-input" name="priority" type="checkbox" value="important"/>
@@ -63,7 +72,8 @@ export const addTodoFormTicket = createHTML(`
     </div>
 `)
 
-todoTicketsSection.appendChild(addTodoFormTicket)
+todoTicketSection.appendChild(todoTicketContainer)
+todoTicketSection.appendChild(addTodoFormTicket)
 
 //Cache HTML
 const addTodoFormTicketButton = addTodoFormTicket.children[1]
@@ -74,17 +84,18 @@ const addTodoFormSubmitButton = addTodoForm.children[0].children[1]
 const addTodoFormOptionalFields = addTodoForm.children[1]
 const addTodoFormDateInput = addTodoFormOptionalFields.children[0]
 const addTodoFormTimeInput = addTodoFormOptionalFields.children[1]
-const addTodoFormPriorityInput = addTodoFormOptionalFields.children[2].children[1]
-const addTodoFormFavoriteInput = addTodoFormOptionalFields.children[3].children[1]
+const addTodoFormProjectInput = addTodoFormOptionalFields.children[2]
+const addTodoFormPriorityInput = addTodoFormOptionalFields.children[3].children[1]
+const addTodoFormFavoriteInput = addTodoFormOptionalFields.children[4].children[1]
 
 //Bind Events
-events.on('displayTodoList', function(todoList) {//Refactor?
-    while (todoTicketsSection.children.length > 1) {
-        todoTicketsSection.removeChild(todoTicketsSection.firstChild)
+events.on('displayTodoList', function(todoList) {
+    while (todoTicketContainer.hasChildNodes()) {
+        todoTicketContainer.removeChild(todoTicketContainer.firstChild)
     }
     todoList.forEach(todo => {
         let todoTicket = createTodoTicket(todo)
-        todoTicketsSection.insertBefore(todoTicket ,todoTicketsSection.lastChild)
+        todoTicketContainer.appendChild(todoTicket)
     })
 })
 
@@ -101,7 +112,8 @@ addTodoFormSubmitButton.addEventListener('click', (e) => {
         date: addTodoFormDateInput.value.toLowerCase().trim(),
         time: addTodoFormTimeInput.value.trim(),
         priority: addTodoFormPriorityInput.checked,
-        favorite: addTodoFormFavoriteInput.checked
+        favorite: addTodoFormFavoriteInput.checked,
+        project: addTodoFormProjectInput.value.trim()
     }
     events.emit('todoSubmited', newTodoData)
     resetForm()
@@ -109,7 +121,7 @@ addTodoFormSubmitButton.addEventListener('click', (e) => {
 
 events.on('todoCreated', function(newTodo) {
     let newTodoTicket = createTodoTicket(newTodo)
-    todoTicketsSection.insertBefore(newTodoTicket ,todoTicketsSection.lastChild)
+    todoTicketContainer.appendChild(newTodoTicket)
     resetForm()
 })
 
@@ -118,6 +130,7 @@ function resetForm() {
     addTodoFormTaskInput.value = ''
     addTodoFormDateInput.value = ''
     addTodoFormTimeInput.value = ''
+    addTodoFormProjectInput.value = ''
     addTodoFormPriorityInput.checked = false
     addTodoFormFavoriteInput.checked = false
 }
