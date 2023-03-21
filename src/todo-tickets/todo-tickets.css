@@ -11,6 +11,7 @@
     padding: 1rem;
     border-top: .5px solid rgb(69, 69, 69);
     cursor: pointer;
+    overflow: hidden;
 }
 
 .todo-ticket:hover {
@@ -34,7 +35,7 @@
 .todo-ticket-task {
     width: 50dvw;
     overflow: hidden;
-    word-wrap: break-word;
+    word-wrap: break-word;    
 }
 
 .todo-ticket-priority {
@@ -73,10 +74,7 @@
     font-size: .8rem;
     font-weight: 200;
     text-align: end;
-    width: 80px;
-    overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
 }
 
 @keyframes append-animate {

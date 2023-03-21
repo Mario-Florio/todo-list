@@ -17,7 +17,7 @@ const hamburgerMenu = createHTML(`
 const links = createHTML(`
     <div id="navbar-links">
         <div class="navbar-dropdown-menu-container">
-            <div class="navbar-links">Home</div>
+            <div class="navbar-links">TodoList</div>
         </div>
         <div class="navbar-dropdown-menu-container">
             <div class="navbar-links">Projects</div>
@@ -27,18 +27,16 @@ const links = createHTML(`
 
 const homeDropdown = createHTML(`
     <div class="navbar-dropdown-menu">
-        <div class="navbar-dropdown-menu-links" data-page="All">All</div>
-        <div class="navbar-dropdown-menu-links" data-page="Today">Today</div>
-        <div class="navbar-dropdown-menu-links" data-page="Upcoming">Upcoming</div>
-        <div class="navbar-dropdown-menu-links" data-page="Important">Important</div>
-        <div class="navbar-dropdown-menu-links" data-page="Favorites">Favorites</div>
+        <div class="navbar-dropdown-menu-links" data-sort="All">All</div>
+        <div class="navbar-dropdown-menu-links" data-sort="Today">Today</div>
+        <div class="navbar-dropdown-menu-links" data-sort="Upcoming">Upcoming</div>
+        <div class="navbar-dropdown-menu-links" data-sort="Important">Important</div>
+        <div class="navbar-dropdown-menu-links" data-sort="Favorites">Favorites</div>
     </div>
 `)
 
 const projectsDropdown = createHTML(`
-    <div class="navbar-dropdown-menu">
-        <div class="navbar-dropdown-menu-links">Project +</div>
-    </div>
+    <div class="navbar-dropdown-menu"></div>
 `)
 
 const searchBar = createHTML(`
@@ -93,10 +91,27 @@ hamburgerMenu.addEventListener('click', () => {
 
 for (let link of homeDropdown.children) {
     link.addEventListener('click', (e) => {
-        let selectedPage = e.target.dataset.page
-        events.emit('pageSelected', selectedPage)
+        events.emit('projectSelected', '')//main links are for TodoList only
+        let selectedSort = e.target.dataset.sort
+        events.emit('sortSelected', selectedSort)
     })
 }
+
+events.on('projectCreated', function(newProject) {//Refactor
+    let newProjectLink = createHTML(`
+        <div class="navbar-dropdown-menu-links" data-project="${newProject.name}">${newProject.name}</div>
+    `)
+    projectsDropdown.appendChild(newProjectLink)
+    //Seperate
+    newProjectLink.addEventListener('click', (e) => {
+        let selectedTodolist = {
+            selectedSort: 'All',
+            selectedProject: e.target.closest('.navbar-dropdown-menu-links').dataset.project
+        }
+        events.emit('projectSelected', selectedTodolist.selectedProject)
+        events.emit('todolistSelected', selectedTodolist)
+    })
+})
 
     //Hover effect
 home.addEventListener('mouseenter', () => {

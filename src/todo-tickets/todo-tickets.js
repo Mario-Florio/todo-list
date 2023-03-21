@@ -10,7 +10,7 @@ const todoTicketContainer = createHTML(`
     <div class="todo-ticket-container"></div>
 `)
 
-function createTodoTicket(todoData) {//Refactor?
+function createTodoTicket(todoData) {
     const todoTicket = createHTML(`
         <div class="todo-ticket new-todo-ticket">
             <div class="todo-ticket-left-container">
@@ -35,8 +35,8 @@ function createTodoTicket(todoData) {//Refactor?
         let todoTicketDate = todoTicket.children[0].children[1].children[1]
         todoTicketDate.setAttribute('style', 'color: rgb(168, 0, 0); font-weight: 300')
     }
-    const todoCompletedButton = todoTicket.children[0].children[0]//Work this into "Cache HTML" section?
-    todoCompletedButton.addEventListener('click', () => {//Work this into "Bind Events" section?
+    const todoCompletedButton = todoTicket.children[0].children[0]
+    todoCompletedButton.addEventListener('click', () => {
         let ticket = todoCompletedButton.closest('.todo-ticket')
         ticket.classList.add('remove-todo-ticket')
         setTimeout(function() {todoTicketContainer.removeChild(ticket), events.emit('todoTicketDeleted', todoData)}, 500)
@@ -115,6 +115,7 @@ addTodoFormSubmitButton.addEventListener('click', (e) => {
         favorite: addTodoFormFavoriteInput.checked,
         project: addTodoFormProjectInput.value.trim()
     }
+    events.emit('projectSubmitted', addTodoFormProjectInput.value.trim())
     events.emit('todoSubmited', newTodoData)
     resetForm()
 })

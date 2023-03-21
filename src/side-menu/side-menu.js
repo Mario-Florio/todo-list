@@ -8,7 +8,8 @@ export const sideMenu = createHTML(`
 
 const mainLinks = createHTML(`
     <div class="side-menu-main-links">
-        <div class="side-menu-links" data-page="All">
+        <div id="main-links-header">TodoList</div>
+        <div class="side-menu-links" data-sort="All">
             <div class="side-menu-links-left-container">
                 <div id="all-icon">
                     <div id="all-icon-left-flange"></div>
@@ -18,28 +19,28 @@ const mainLinks = createHTML(`
             </div>
             <div class="side-menu-links-right-container"></div>
         </div>
-        <div class="side-menu-links" data-page="Today">
+        <div class="side-menu-links" data-sort="Today">
             <div class="side-menu-links-left-container">
                 <div id="today-icon"></div>
                 <div>Today</div>
             </div>
             <div class="side-menu-links-right-container"></div>
         </div>
-        <div class="side-menu-links" data-page="Upcoming">
+        <div class="side-menu-links" data-sort="Upcoming">
             <div class="side-menu-links-left-container">
                 <div id="upcoming-icon"></div>
                 <div>Upcoming</div>
             </div>
             <div class="side-menu-links-right-container"></div>
         </div>
-        <div class="side-menu-links" data-page="Important">
+        <div class="side-menu-links" data-sort="Important">
             <div class="side-menu-links-left-container">
                 <div id="important-icon">!</div>
                 <div>Important</div>
             </div>
             <div class="side-menu-links-right-container"></div>
         </div>
-        <div class="side-menu-links" data-page="Favorites">
+        <div class="side-menu-links" data-sort="Favorites">
             <div class="side-menu-links-left-container">
                 <div id="favorites-icon"></div>
                 <div>Favorites</div>
@@ -59,27 +60,26 @@ const projectsSection = createHTML(`
             <div>Projects</div>
         </div>
         <div class="project-dropdown-menu">
-            <div class="project-links">
-                <form class="add-project-form">
-                    <div class="side-menu-links-left-container">
-                        <input id="project-input" type="text" name="project-name" placeholder="Project"/>
-                    </div>
-                    <button id="add-project-button">
-                        <div class="add-project-button-bar1"></div>
-                        <div class="add-project-button-bar2"></div>
-                    </button>
-                </form>
-            </div>
+            <div class="project-links"></div>
+            <form class="add-project-form">
+                <div class="side-menu-links-left-container">
+                    <input id="project-input" type="text" name="project-name" placeholder="New Project"/>
+                </div>
+                <button id="add-project-button">
+                    <div class="add-project-button-bar1"></div>
+                    <div class="add-project-button-bar2"></div>
+                </button>
+            </form>
         </div>
     </div>
 `)
 
 function createProjectLink(project) {
     let projectLink = createHTML(`
-        <div class="project-links">
+        <div class="project-links" data-project="${project.name}">
             <div class="side-menu-links">
                 <div class="side-menu-links-left-container">${project.name}</div>
-                <div class="side-menu-links-right-container">${project.all.length}</div>
+                <div class="side-menu-links-right-container"></div>
             </div>
         </div>
     `)
@@ -90,31 +90,24 @@ sideMenu.appendChild(mainLinks)
 sideMenu.appendChild(projectsSection)
 
 //Cache HTML
-const allQuantity = mainLinks.children[0].children[1]
-const todayIcon = mainLinks.children[1].children[0].children[0]
-const todayQuantity = mainLinks.children[1].children[1]
-const upcomingQuantity = mainLinks.children[2].children[1]
-const importantQuantity = mainLinks.children[3].children[1]
-const favoritesQuantity = mainLinks.children[4].children[1]
+const allQuantity = mainLinks.children[1].children[1]
+const todayIcon = mainLinks.children[2].children[0].children[0]
+const todayQuantity = mainLinks.children[2].children[1]
+const upcomingQuantity = mainLinks.children[3].children[1]
+const importantQuantity = mainLinks.children[4].children[1]
+const favoritesQuantity = mainLinks.children[5].children[1]
 const projectsSectionHeader = projectsSection.children[0]
 const dropdownArrow = projectsSection.children[0].children[0]
 const projectLinks = projectsSection.children[1].children[0]
-const addProjectInput = projectsSection.children[1].children[0].children[0].children[0].children[0]
-const addProjectButton = projectsSection.children[1].children[0].children[0].children[1]
+const addProjectInput = projectsSection.children[1].children[1].children[0].children[0]
+const addProjectButton = projectsSection.children[1].children[1].children[1]
 
 //Bind Events
-for (let link of mainLinks.children) {
-    link.addEventListener('click', (e) => {
-        let selectedPage = e.target.closest('.side-menu-links').dataset.page
-        events.emit('pageSelected', selectedPage)
-    })
-}
-
-events.on('hamburgerMenuToggled', function() {
+events.on('hamburgerMenuToggled', function openSideMenu() {
     sideMenu.classList.toggle('side-menu-active')
 })
 
-events.on('setDate', function(todaysDate) {
+events.on('setDate', function updateTodayIcon(todaysDate) {
     todayIcon.textContent = todaysDate
 })
 
@@ -134,11 +127,37 @@ addProjectButton.addEventListener('click', (e) => {
 
 events.on('projectCreated', function(newProject) {
     let newProjectLink = createProjectLink(newProject)
+    newProjectLink.id = newProject.id
     newProjectLink.classList.toggle('new-project-link')
-    projectLinks.insertBefore(newProjectLink, projectLinks.lastElementChild)
+    projectLinks.appendChild(newProjectLink)
+    //Seperate?
+    newProjectLink.addEventListener('click', (e) => {
+        let selectedTodolist = {
+            selectedSort: 'All',
+            selectedProject: e.target.closest('.project-links').dataset.project
+        }
+        events.emit('projectSelected', selectedTodolist.selectedProject)
+        events.emit('todolistSelected', selectedTodolist)
+    })
 })
 
-events.on('todoListChanged', function(todoList) {//Refactor
+for (let link of mainLinks.children) {
+    link.addEventListener('click', function selectSort(e) {
+        events.emit('projectSelected', '')//main links are for TodoList only
+        let selectedSort = e.target.closest('.side-menu-links').dataset.sort
+        events.emit('sortSelected', selectedSort)
+    })
+}
+
+events.on('projectUpdated', function updateProjectQuantities(project) {
+    for (let link of projectLinks.children) {
+        if (link.id === project.id) {
+            link.children[0].children[1].textContent = project.all.length 
+        }
+    }
+})
+
+events.on('todoListUpdated', function updateQuantities(todoList) {//Refactor
     if (todoList.all.length > 0) {
         allQuantity.textContent = todoList.all.length
     } else {

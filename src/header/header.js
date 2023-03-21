@@ -3,40 +3,57 @@ import { events } from '../pub-sub'
 import './header.css'
 
 export const header = createHTML(`
-    <div id="header">
-        <div class="slide" data-page="All" data-active>All</div>
-        <div class="slide" data-page="Today">Today</div>
-        <div class="slide" data-page="Upcoming">Upcoming</div>
-        <div class="slide" data-page="Important">Important</div>
-        <div class="slide" data-page="Favorites">Favorites</div>
+    <div id="header">TodoList</div>
+`)
+
+export const subHeader = createHTML(`
+    <div id="sub-header">
+        <div class="slide" data-project data-sort="All" data-active>All</div>
+        <div class="slide" data-project data-sort="Today">Today</div>
+        <div class="slide" data-project data-sort="Upcoming">Upcoming</div>
+        <div class="slide" data-project data-sort="Important">Important</div>
+        <div class="slide" data-project data-sort="Favorites">Favorites</div>
     </div>
 `)
 
 //Cache HTML
-const links = header.children
+const links = subHeader.children
 const getActiveSlide = function() {
-    const activeSlide = header.querySelector('[data-active]')
+    const activeSlide = subHeader.querySelector('[data-active]')
     return activeSlide
 }
 
 //Bind Events
-for (let i = 0; i < links.length; i++) {//Refactor for readability?
-    links[i].addEventListener('click', (e) => {
+for (let link of links) {
+    link.addEventListener('click', (e) => {
         let activeSlide = getActiveSlide()
         delete activeSlide.dataset.active
-        e.target.dataset.active = true
-        events.emit('todoListSelected', links[i].dataset.page)
+        e.target.dataset.active = true//new active slide
+        let selectedTodolist = {
+            selectedSort: link.dataset.sort,
+            selectedProject: link.dataset.project
+        }
+        events.emit('todolistSelected', selectedTodolist)
     })
 }
 
-events.on('pageSelected', function(selectedPage) {
+events.on('projectSelected', function(selectedProject) {
+    for (let link of links) {
+        link.dataset.project = selectedProject
+    }
+})
+
+events.on('sortSelected', function(selectedSort) {
     let activeSlide = getActiveSlide()
     delete activeSlide.dataset.active
     for (let link of links) {
-        if (link.dataset.page === selectedPage) {
-            let selectedTodoList = link.dataset.page
+        if (link.dataset.sort === selectedSort) {
             link.dataset.active = true
-            events.emit('todoListSelected', selectedTodoList)
+            let selectedTodolist = {
+                selectedSort: link.dataset.sort,
+                selectedProject: link.dataset.project
+            }
+            events.emit('todolistSelected', selectedTodolist)
         }
     }
 })
