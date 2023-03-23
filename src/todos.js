@@ -89,6 +89,7 @@ class Project extends TodoList {
         this.all.push(todo)
     }
     removeTodo(todoToRemove) {
+        delete todoToRemove.project
         this.all.filter(todo => {
             if (todo.id === todoToRemove.id) {
                 this.all.splice(this.all.indexOf(todo), 1)
@@ -108,7 +109,7 @@ window.addEventListener('load', () => {
 })
 
     //Todos
-events.on('todoSubmited', function parseDateTime(newTodoData) {
+events.on('todoSubmitted', function parseDateTime(newTodoData) {
     newTodoData.id = format(new Date(), 'MM/dd/yyyy HH:mm:ss:SSSS')//Date serves as unique Id
     if (newTodoData.date === '') {
         newTodoData.date = format(new Date(), 'M/d/yyyy')
@@ -143,16 +144,14 @@ events.on('date&timeInputParsed', function createTodo(newTodoData) {
     if (newTodoData.favorite === true) {
         newTodo.setFavorite()
     }
+    newTodo.project = newTodoData.project
     if (newTodoData.project !== '') {
         for (let i = 0; i < projects.length; i++) {
             if (newTodoData.project === projects[i].name) {
-                newTodo.project = newTodoData.project
                 projects[i].addTodo(newTodo)
                 events.emit('projectUpdated', projects[i])
             }
         }
-    } else {
-        newTodo.project = newTodoData.project//empty string
     }
     todoList.all.push(newTodo)
     let newTodoClone = cloneTodo(newTodo)
@@ -161,11 +160,74 @@ events.on('date&timeInputParsed', function createTodo(newTodoData) {
     events.emit('todoCreated', newTodoClone)
 })
 
+events.on('todoEdited', function(editedTodoData) {
+    if (editedTodoData.date === '') {
+        editedTodoData.date = format(new Date(), 'M/d/yyyy')
+    } else {
+        editedTodoData.date = inputConverter(editedTodoData.date)
+    }
+    if (editedTodoData.time === '' && isToday(new Date(editedTodoData.date))) {
+        let nextHour = format(addSeconds(endOfHour(new Date()), 1), 'H:mm')
+        editedTodoData.time = nextHour
+    }
+    if (editedTodoData.time === '' && !isToday(new Date(editedTodoData.date))) {
+        let nextHour = format(addSeconds(startOfDay(new Date()), 1), 'H:mm')
+        editedTodoData.time = nextHour
+    }
+    if (!isValid(new Date(editedTodoData.date))) {
+        return
+    }
+    if (!isValid(new Date(`${editedTodoData.date} ${editedTodoData.time}`))) {
+        return
+    }
+    let dateTime = new Date(`${editedTodoData.date} ${editedTodoData.time}`)
+    editedTodoData.date = format(new Date(dateTime), 'M/d/yyyy')
+    editedTodoData.time = format(new Date(dateTime), 'h:mm a')
+    events.emit('todoEdited-Date&TimeParsed', editedTodoData)
+})
+
+events.on('todoEdited-Date&TimeParsed', function(editedTodoData) {
+    todoList.all.forEach(todo => {
+        if (todo.id === editedTodoData.id) {
+            todo.task = editedTodoData.task
+            todo.date = editedTodoData.date
+            todo.time = editedTodoData.time
+            if (editedTodoData.priority === true) {
+                todo.setPriority()
+            } else {
+                todo.removePriority()
+            }
+            if (editedTodoData.favorite === true) {
+                todo.setFavorite()
+            } else {
+                todo.removeFavorite()
+            }
+            projects.forEach(project => {//Refactor
+                if (project.name === todo.project) {
+                    project.removeTodo(todo)
+                }
+            })
+            todo.project = editedTodoData.project
+            if (todo.project !== '') {
+                for (let i = 0; i < projects.length; i++) {
+                    if (todo.project === projects[i].name) {
+                        projects[i].addTodo(todo)
+                        events.emit('projectUpdated', projects[i])
+                    }
+                }
+            }
+            let todoClone = cloneTodo(todo)
+            todoClone.date = convertData(editedTodoData.date)
+            events.emit('todoListUpdated', todoList)
+            events.emit('todoDataEdited', todoClone)
+        }
+    })
+})
+
 events.on('todoTicketDeleted', function(todoTicketData) {
     todoList.all.filter(todo => {
         if (todo.id === todoTicketData.id) {
             todoList.all.splice(todoList.all.indexOf(todo), 1)
-            console.log(todoList)
             events.emit('todoListUpdated', todoList)
         }
         projects.forEach(project => {

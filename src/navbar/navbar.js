@@ -46,6 +46,7 @@ const createProjectLink = function(project) {
     return projectLink
 }
 
+/*
 const searchBar = createHTML(`
     <form id="search-bar">
         <div>
@@ -57,6 +58,7 @@ const searchBar = createHTML(`
         <input placeholder="Search" type="search"/>
     </form>
 `)
+*/
 
 const notificationBell = createHTML(`
     <div id="notification-bell">
@@ -64,9 +66,11 @@ const notificationBell = createHTML(`
     </div>
 `)
 
+/*
 const accountIcon = createHTML(`
     <div id="account-icon"></div>
 `)
+*/
 
 const navbarContainerLeft = createHTML(`
     <div class="navbar-left-container"></div>
@@ -82,9 +86,9 @@ navbarContainerLeft.appendChild(hamburgerMenu)
 navbarContainerLeft.appendChild(links)
 links.children[0].appendChild(homeDropdown)
 links.children[1].appendChild(projectsDropdown)
-navbarContainerLeft.appendChild(searchBar)
+//navbarContainerLeft.appendChild(searchBar)
 navbarContainerRight.appendChild(notificationBell)
-navbarContainerRight.appendChild(accountIcon)
+//navbarContainerRight.appendChild(accountIcon)
 
 //Cache HTML
 const home = links.children[0].children[0]
