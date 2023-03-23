@@ -44,7 +44,7 @@ const todoTicketSectionModule = (function() {
     todoTicketSection.appendChild(addTodoFormTicket)
 
     //Cache HTML
-    //Refactor variables so they are not dependent on each other
+        //Refactor variables so they are not dependent on each other
     const addTodoFormTicketButton = addTodoFormTicket.children[1]
     const addTodoForm = addTodoFormTicket.children[0]
     const addTodoFormRequiredFields = addTodoFormTicket.children[0].children[0]
@@ -76,9 +76,10 @@ const todoTicketSectionModule = (function() {
             time: addTodoFormTimeInput.value.trim(),
             priority: addTodoFormPriorityInput.checked,
             favorite: addTodoFormFavoriteInput.checked,
-            project: addTodoFormProjectInput.value.trim()
+            project: addTodoFormProjectInput.value.trim(),
+            type: 'Create'
         }
-        events.emit('projectSubmitted', addTodoFormProjectInput.value.trim())
+        events.emit('projectSubmitted', newTodoData.project)
         events.emit('todoSubmitted', newTodoData)
         resetForm()
     })
@@ -187,20 +188,21 @@ const createTodoTicket = function(todoData) {
     //Bind Events
     todoTicket.addEventListener('click', (e) => {
         if (e.target !== todoCompletedButton && e.target !== todoTicketFormBoxCancelButton && e.target !== todoTicketFormBoxSubmitButton) {
-            todoTicketTask.contentEditable = true
+            let editableEls = [
+                todoTicketTask,
+                todoTicketDate,
+                todoTicketTime,
+                todoTicketProject
+            ]
+            editableEls.forEach(el => {
+                el.contentEditable = true
+                el.classList.add('input-active')
+            })
             todoTicketTask.dataset.placeholder = 'Edit Task'
-            todoTicketTask.classList.add('input-active')
-            todoTicketDate.contentEditable = true
             todoTicketDate.dataset.placeholder = 'Edit Date'
-            todoTicketDate.classList.add('input-active')
-            todoTicketTime.contentEditable = true
             todoTicketTime.dataset.placeholder = 'Edit Time'
-            todoTicketTime.classList.add('input-active')
-            todoTicketProject.contentEditable = true
             todoTicketProject.dataset.placeholder = 'Edit Project'
-            todoTicketProject.classList.add('input-active')
             todoTicketFormBox.classList.add('form-box-active')
-            console.log(todoData.id)
         }
     })
 
@@ -217,18 +219,18 @@ const createTodoTicket = function(todoData) {
     todoTicketFormBoxSubmitButton.addEventListener('click', (e) => {
         e.preventDefault()
         let editedTodoData = {
-            id: todoData.id,
+            id: todoTicket.id, //Changed from "todoData.id"; change back if any issues
             task: todoTicketTask.textContent.trim(),
             date: todoTicketDate.textContent.toLowerCase().trim(),
             time: todoTicketTime.textContent.trim(),
             priority: todoTicketPriorityInput.checked,
             favorite: todoTicketFavoriteInput.checked,
-            project: todoTicketProject.textContent.trim()
+            project: todoTicketProject.textContent.trim(),
+            type: 'Update'
         }
         resetForm()
-        //Delete Todo from old project
         events.emit('projectSubmitted', editedTodoData.project)
-        events.emit('todoEdited', editedTodoData)
+        events.emit('todoSubmitted', editedTodoData)
     })
 
     events.on('todoDataEdited', function(todoClone) {
@@ -246,28 +248,27 @@ const createTodoTicket = function(todoData) {
                 todoTicketDate.classList.remove('date-past-due')
                 todoTicketTime.classList.remove('time-past-due')
             }
+            todoData = todoClone//Refactor to make more sense
         }
     })
 
     //Utility Functions
     function resetForm() {
+        let editableEls = [
+            todoTicketTask,
+            todoTicketDate,
+            todoTicketTime,
+            todoTicketProject
+        ]
+        editableEls.forEach(el => {
+            el.removeAttribute('data-placeholder', '.input-active')
+            el.contentEditable = false
+        })
         todoTicketFormBox.classList.remove('form-box-active')
-        todoTicketTask.contentEditable = false
-        todoTicketTask.removeAttribute('data-placeholder')
         todoTicketTask.textContent = todoData.task
-        todoTicketTask.classList.remove('input-active')
-        todoTicketDate.contentEditable = false
-        todoTicketDate.removeAttribute('data-placeholder')
         todoTicketDate.textContent = todoData.date
-        todoTicketDate.classList.remove('input-active')
-        todoTicketTime.contentEditable = false
-        todoTicketTime.removeAttribute('data-placeholder')
         todoTicketTime.textContent = todoData.time
-        todoTicketTime.classList.remove('input-active')
-        todoTicketProject.contentEditable = false
-        todoTicketProject.removeAttribute('data-placeholder')
         todoTicketProject.textContent = todoData.project
-        todoTicketProject.classList.remove('input-active')
         const priorityIconEl = todoTicket.children[0].children[0].children[1].children[0].children[0]
         if (priorityIconEl.classList.contains('todo-ticket-priority-active')) {
             todoTicketPriorityInput.checked = true

@@ -90,7 +90,7 @@ class Project extends TodoList {
     }
     removeTodo(todoToRemove) {
         delete todoToRemove.project
-        this.all.filter(todo => {
+        this.all.forEach(todo => {
             if (todo.id === todoToRemove.id) {
                 this.all.splice(this.all.indexOf(todo), 1)
             }
@@ -109,34 +109,39 @@ window.addEventListener('load', () => {
 })
 
     //Todos
-events.on('todoSubmitted', function parseDateTime(newTodoData) {
-    newTodoData.id = format(new Date(), 'MM/dd/yyyy HH:mm:ss:SSSS')//Date serves as unique Id
-    if (newTodoData.date === '') {
-        newTodoData.date = format(new Date(), 'M/d/yyyy')
+events.on('todoSubmitted', function parseDateTime(todoData) {
+    if (todoData.date === '') {
+        todoData.date = format(new Date(), 'M/d/yyyy')
     } else {
-        newTodoData.date = inputConverter(newTodoData.date)
+        todoData.date = inputConverter(todoData.date)
     }
-    if (newTodoData.time === '' && isToday(new Date(newTodoData.date))) {
+    if (todoData.time === '' && isToday(new Date(todoData.date))) {
         let nextHour = format(addSeconds(endOfHour(new Date()), 1), 'H:mm')
-        newTodoData.time = nextHour
+        todoData.time = nextHour
     }
-    if (newTodoData.time === '' && !isToday(new Date(newTodoData.date))) {
+    if (todoData.time === '' && !isToday(new Date(todoData.date))) {
         let nextHour = format(addSeconds(startOfDay(new Date()), 1), 'H:mm')
-        newTodoData.time = nextHour
+        todoData.time = nextHour
     }
-    if (!isValid(new Date(newTodoData.date))) {
+    if (!isValid(new Date(todoData.date))) {
         return
     }
-    if (!isValid(new Date(`${newTodoData.date} ${newTodoData.time}`))) {
+    if (!isValid(new Date(`${todoData.date} ${todoData.time}`))) {
         return
     }
-    let dateTime = new Date(`${newTodoData.date} ${newTodoData.time}`)
-    newTodoData.date = format(new Date(dateTime), 'M/d/yyyy')
-    newTodoData.time = format(new Date(dateTime), 'h:mm a')
-    events.emit('date&timeInputParsed', newTodoData)
+    let dateTime = new Date(`${todoData.date} ${todoData.time}`)
+    todoData.date = format(new Date(dateTime), 'M/d/yyyy')
+    todoData.time = format(new Date(dateTime), 'h:mm a')
+    if (todoData.type === 'Create') {
+        events.emit('date&timeInputParsed-CreateTodo', todoData)
+    }
+    if (todoData.type === 'Update') {
+        events.emit('date&timeParsed-UpdateTodo', todoData)
+    }
 })
 
-events.on('date&timeInputParsed', function createTodo(newTodoData) {
+events.on('date&timeInputParsed-CreateTodo', function createTodo(newTodoData) {
+    newTodoData.id = format(new Date(), 'MM/dd/yyyy HH:mm:ss:SSSS')//Date serves as unique Id
     let newTodo = new Todo(newTodoData.task, newTodoData.date, newTodoData.time, newTodoData.id)
     if (newTodoData.priority === true) {
         newTodo.setPriority()
@@ -160,33 +165,7 @@ events.on('date&timeInputParsed', function createTodo(newTodoData) {
     events.emit('todoCreated', newTodoClone)
 })
 
-events.on('todoEdited', function(editedTodoData) {
-    if (editedTodoData.date === '') {
-        editedTodoData.date = format(new Date(), 'M/d/yyyy')
-    } else {
-        editedTodoData.date = inputConverter(editedTodoData.date)
-    }
-    if (editedTodoData.time === '' && isToday(new Date(editedTodoData.date))) {
-        let nextHour = format(addSeconds(endOfHour(new Date()), 1), 'H:mm')
-        editedTodoData.time = nextHour
-    }
-    if (editedTodoData.time === '' && !isToday(new Date(editedTodoData.date))) {
-        let nextHour = format(addSeconds(startOfDay(new Date()), 1), 'H:mm')
-        editedTodoData.time = nextHour
-    }
-    if (!isValid(new Date(editedTodoData.date))) {
-        return
-    }
-    if (!isValid(new Date(`${editedTodoData.date} ${editedTodoData.time}`))) {
-        return
-    }
-    let dateTime = new Date(`${editedTodoData.date} ${editedTodoData.time}`)
-    editedTodoData.date = format(new Date(dateTime), 'M/d/yyyy')
-    editedTodoData.time = format(new Date(dateTime), 'h:mm a')
-    events.emit('todoEdited-Date&TimeParsed', editedTodoData)
-})
-
-events.on('todoEdited-Date&TimeParsed', function(editedTodoData) {
+events.on('date&timeParsed-UpdateTodo', function(editedTodoData) {
     todoList.all.forEach(todo => {
         if (todo.id === editedTodoData.id) {
             todo.task = editedTodoData.task
@@ -205,6 +184,7 @@ events.on('todoEdited-Date&TimeParsed', function(editedTodoData) {
             projects.forEach(project => {//Refactor
                 if (project.name === todo.project) {
                     project.removeTodo(todo)
+                    events.emit('projectUpdated', project)
                 }
             })
             todo.project = editedTodoData.project
@@ -229,13 +209,14 @@ events.on('todoTicketDeleted', function(todoTicketData) {
         if (todo.id === todoTicketData.id) {
             todoList.all.splice(todoList.all.indexOf(todo), 1)
             events.emit('todoListUpdated', todoList)
+            
         }
-        projects.forEach(project => {
-            if (todo.project === project.name) {
-                project.removeTodo(todo)
-                events.emit('projectUpdated', project)
-            }
-        })
+    })
+    projects.forEach(project => {
+        if (todoTicketData.project === project.name) {
+            project.removeTodo(todoTicketData)
+            events.emit('projectUpdated', project)
+        }
     })
 })
 

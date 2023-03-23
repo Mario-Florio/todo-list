@@ -31,6 +31,7 @@
 
 .todo-ticket-task {
     width: 50dvw;
+    border-bottom: .2px solid rgba(69, 69, 69, 0.252);
     outline: none;
     word-wrap: break-word;    
 }
@@ -63,7 +64,6 @@
 .todo-ticket-date {
     color: rgb(69, 69, 69);
     font-size: .8rem;
-    border-top: .2px solid rgba(69, 69, 69, 0.252);
     outline: 0px solid transparent;
 }
 
@@ -75,7 +75,6 @@
 .todo-ticket-time {
     color: rgb(69, 69, 69);
     font-size: .8rem;
-    border-top: .2px solid rgba(69, 69, 69, 0.252);
     outline: 0px solid transparent;
 }
 
@@ -139,7 +138,7 @@
 }
 
 .form-box {
-    display: flex; 
+    display: flex;
     justify-content: space-between; 
     align-items: center;
     pointer-events: none;
