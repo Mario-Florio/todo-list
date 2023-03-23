@@ -3,6 +3,7 @@
     z-index: 1;
     position: absolute;
     left: -320px;
+    margin-bottom: 0;
     height: 100%;
     width: 320px;
     background-image: linear-gradient(to right, rgb(147, 147, 147), rgb(235, 235, 235));
@@ -225,6 +226,7 @@
 
 #project-input {
     font-size: .9;
+    font-weight: 200;
     background: transparent;
     outline: none;
     border: none;

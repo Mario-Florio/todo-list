@@ -39,6 +39,13 @@ const projectsDropdown = createHTML(`
     <div class="navbar-dropdown-menu"></div>
 `)
 
+const createProjectLink = function(project) {
+    const projectLink = createHTML(`
+        <div class="navbar-dropdown-menu-links" data-project="${project.name}">${project.name}</div>
+    `)
+    return projectLink
+}
+
 const searchBar = createHTML(`
     <form id="search-bar">
         <div>
@@ -53,7 +60,7 @@ const searchBar = createHTML(`
 
 const notificationBell = createHTML(`
     <div id="notification-bell">
-        <div id="notification-counter"><div>
+        <div class="notification-counter"><div>
     </div>
 `)
 
@@ -89,6 +96,15 @@ hamburgerMenu.addEventListener('click', () => {
     events.emit('hamburgerMenuToggled')
 })
 
+events.on('todoListUpdated', function(todoList) {
+    if (todoList.pastDue().length > 0) {
+        notificationBell.children[0].textContent = todoList.pastDue().length
+        notificationBell.children[0].classList.add('notification-counter-active')
+    } else {
+        notificationBell.children[0].classList.remove('notification-counter-active')
+    }
+})
+
 for (let link of homeDropdown.children) {
     link.addEventListener('click', (e) => {
         events.emit('projectSelected', '')//main links are for TodoList only
@@ -98,9 +114,7 @@ for (let link of homeDropdown.children) {
 }
 
 events.on('projectCreated', function(newProject) {//Refactor
-    let newProjectLink = createHTML(`
-        <div class="navbar-dropdown-menu-links" data-project="${newProject.name}">${newProject.name}</div>
-    `)
+    let newProjectLink = createProjectLink(newProject)
     projectsDropdown.appendChild(newProjectLink)
     //Seperate
     newProjectLink.addEventListener('click', (e) => {
@@ -118,37 +132,37 @@ home.addEventListener('mouseenter', () => {
     let dropdownMenu = home.parentNode.children[1]
     dropdownMenu.classList.toggle('navbar-dropdown-menu-active')
 })
-
+        
 home.addEventListener('mouseleave', () => {
     let dropdownMenu = home.parentNode.children[1]
     dropdownMenu.classList.toggle('navbar-dropdown-menu-active')
 })
-
+        
 projects.addEventListener('mouseenter', () => {
     let dropdownMenu = projects.parentNode.children[1]
     dropdownMenu.classList.toggle('navbar-dropdown-menu-active')
 })
-
+        
 projects.addEventListener('mouseleave', () => {
     let dropdownMenu = projects.parentNode.children[1]
     dropdownMenu.classList.toggle('navbar-dropdown-menu-active')
 })
-
+        
 homeDropdown.addEventListener('mouseenter', () => {
     let dropdownMenu = event.target.parentNode.children[1]
     dropdownMenu.classList.toggle('navbar-dropdown-menu-active')
 })
-
+        
 homeDropdown.addEventListener('mouseleave', () => {
     let dropdownMenu = event.target.parentNode.children[1]
     dropdownMenu.classList.toggle('navbar-dropdown-menu-active')
 })
-
+        
 projectsDropdown.addEventListener('mouseenter', () => {
     let dropdownMenu = event.target.parentNode.children[1]
     dropdownMenu.classList.toggle('navbar-dropdown-menu-active')
 })
-
+        
 projectsDropdown.addEventListener('mouseleave', () => {
     let dropdownMenu = event.target.parentNode.children[1]
     dropdownMenu.classList.toggle('navbar-dropdown-menu-active')

@@ -83,6 +83,14 @@ function createProjectLink(project) {
             </div>
         </div>
     `)
+    projectLink.addEventListener('click', (e) => {
+        let selectedTodolist = {
+            selectedSort: 'All',
+            selectedProject: e.target.closest('.project-links').dataset.project
+        }
+        events.emit('projectSelected', selectedTodolist.selectedProject)
+        events.emit('todolistSelected', selectedTodolist)
+    })
     return projectLink
 }
 
@@ -107,47 +115,14 @@ events.on('hamburgerMenuToggled', function openSideMenu() {
     sideMenu.classList.toggle('side-menu-active')
 })
 
-events.on('setDate', function updateTodayIcon(todaysDate) {
-    todayIcon.textContent = todaysDate
-})
-
 projectsSectionHeader.addEventListener('click', () => {
     dropdownArrow.classList.toggle('project-section-dropdown-arrow-active')
     projectsSection.children[1].classList.toggle('project-dropdown-menu-active')
 })
 
-addProjectButton.addEventListener('click', (e) => {
-    e.preventDefault()
-    if (addProjectInput.value !== '') {
-        let newProjectName = addProjectInput.value
-        addProjectInput.value = ''
-        events.emit('projectSubmitted', newProjectName)
-    }
+events.on('setDate', function updateTodayIcon(todaysDate) {
+    todayIcon.textContent = todaysDate
 })
-
-events.on('projectCreated', function(newProject) {
-    let newProjectLink = createProjectLink(newProject)
-    newProjectLink.id = newProject.id
-    newProjectLink.classList.toggle('new-project-link')
-    projectLinks.appendChild(newProjectLink)
-    //Seperate?
-    newProjectLink.addEventListener('click', (e) => {
-        let selectedTodolist = {
-            selectedSort: 'All',
-            selectedProject: e.target.closest('.project-links').dataset.project
-        }
-        events.emit('projectSelected', selectedTodolist.selectedProject)
-        events.emit('todolistSelected', selectedTodolist)
-    })
-})
-
-for (let link of mainLinks.children) {
-    link.addEventListener('click', function selectSort(e) {
-        events.emit('projectSelected', '')//main links are for TodoList only
-        let selectedSort = e.target.closest('.side-menu-links').dataset.sort
-        events.emit('sortSelected', selectedSort)
-    })
-}
 
 events.on('projectUpdated', function updateProjectQuantities(project) {
     for (let link of projectLinks.children) {
@@ -157,7 +132,7 @@ events.on('projectUpdated', function updateProjectQuantities(project) {
     }
 })
 
-events.on('todoListUpdated', function updateQuantities(todoList) {//Refactor
+events.on('todoListUpdated', function updateQuantities(todoList) {
     if (todoList.all.length > 0) {
         allQuantity.textContent = todoList.all.length
     } else {
@@ -184,3 +159,27 @@ events.on('todoListUpdated', function updateQuantities(todoList) {//Refactor
         favoritesQuantity.textContent = ''
     }
 })
+
+addProjectButton.addEventListener('click', (e) => {
+    e.preventDefault()
+    if (addProjectInput.value !== '') {
+        let newProjectName = addProjectInput.value
+        addProjectInput.value = ''
+        events.emit('projectSubmitted', newProjectName)
+    }
+})
+
+events.on('projectCreated', function(newProject) {
+    let newProjectLink = createProjectLink(newProject)
+    newProjectLink.id = newProject.id
+    newProjectLink.classList.toggle('new-project-link')
+    projectLinks.appendChild(newProjectLink)
+})
+
+for (let link of mainLinks.children) {
+    link.addEventListener('click', function selectSort(e) {
+        events.emit('projectSelected', '')//main links are for TodoList only
+        let selectedSort = e.target.closest('.side-menu-links').dataset.sort
+        events.emit('sortSelected', selectedSort)
+    })
+}

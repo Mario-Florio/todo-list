@@ -3,10 +3,12 @@ import { events } from '../pub-sub'
 import './header.css'
 
 export const header = createHTML(`
-    <div id="header">TodoList</div>
+    <div>
+        <div id="header">TodoList</div>
+    </div>
 `)
 
-export const subHeader = createHTML(`
+const subHeader = createHTML(`
     <div id="sub-header">
         <div class="slide" data-project data-sort="All" data-active>All</div>
         <div class="slide" data-project data-sort="Today">Today</div>
@@ -16,15 +18,25 @@ export const subHeader = createHTML(`
     </div>
 `)
 
+header.appendChild(subHeader)
+
 //Cache HTML
-const links = subHeader.children
+const sortLinks = subHeader.children
 const getActiveSlide = function() {
     const activeSlide = subHeader.querySelector('[data-active]')
     return activeSlide
 }
 
 //Bind Events
-for (let link of links) {
+events.on('todolistSelected', function setHeader(selectedTodolist) {
+    if (selectedTodolist.selectedProject === '') {
+        header.children[0].textContent = 'TodoList'
+    } else {
+        header.children[0].textContent = selectedTodolist.selectedProject
+    }
+})
+
+for (let link of sortLinks) {
     link.addEventListener('click', (e) => {
         let activeSlide = getActiveSlide()
         delete activeSlide.dataset.active
@@ -37,16 +49,10 @@ for (let link of links) {
     })
 }
 
-events.on('projectSelected', function(selectedProject) {
-    for (let link of links) {
-        link.dataset.project = selectedProject
-    }
-})
-
 events.on('sortSelected', function(selectedSort) {
     let activeSlide = getActiveSlide()
     delete activeSlide.dataset.active
-    for (let link of links) {
+    for (let link of sortLinks) {
         if (link.dataset.sort === selectedSort) {
             link.dataset.active = true
             let selectedTodolist = {
@@ -55,5 +61,11 @@ events.on('sortSelected', function(selectedSort) {
             }
             events.emit('todolistSelected', selectedTodolist)
         }
+    }
+})
+
+events.on('projectSelected', function(selectedProject) {
+    for (let link of sortLinks) {
+        link.dataset.project = selectedProject
     }
 })

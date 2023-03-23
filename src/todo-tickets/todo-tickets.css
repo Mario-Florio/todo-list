@@ -5,9 +5,6 @@
 }
 
 .todo-ticket {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     padding: 1rem;
     border-top: .5px solid rgb(69, 69, 69);
     cursor: pointer;
@@ -34,7 +31,7 @@
 
 .todo-ticket-task {
     width: 50dvw;
-    overflow: hidden;
+    outline: none;
     word-wrap: break-word;    
 }
 
@@ -67,14 +64,22 @@
     color: rgb(69, 69, 69);
     font-size: .8rem;
     border-top: .2px solid rgba(69, 69, 69, 0.252);
+    outline: 0px solid transparent;
+}
+
+.todo-ticket-time {
+    color: rgb(69, 69, 69);
+    font-size: .8rem;
+    border-top: .2px solid rgba(69, 69, 69, 0.252);
+    outline: 0px solid transparent;
 }
 
 .todo-ticket-project {
     color: rgb(69, 69, 69);
     font-size: .8rem;
     font-weight: 200;
-    text-align: end;
-    text-overflow: ellipsis;
+    border: none;
+    outline: 0px solid transparent;
 }
 
 @keyframes append-animate {
@@ -100,6 +105,42 @@
 
 .remove-todo-ticket {
 	animation: remove-animate .5s ease-in-out;
+}
+
+@keyframes todo-input-animate {
+	from {
+        transform: scale(0);
+		opacity: 0;
+	}
+	to {
+		transform: scale(1);
+		opacity: 1;	
+	}
+}
+
+.input-active {
+    cursor: text;
+}
+
+[data-placeholder]:empty:before {
+    color: #888;
+    content: attr(data-placeholder);
+    animation: todo-input-animate .4s ease-in-out;
+}
+
+.form-box {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    pointer-events: none;
+    opacity: 0;
+    transition: .4s ease-in-out;
+}
+
+.form-box-active {
+    pointer-events: inherit;
+    opacity: 1;
+    transition: .4s ease-in-out;
 }
 
 /* Add Todo Ticket */
@@ -167,6 +208,7 @@
 
 .add-todo-form-task-input {
     font-size: .9;
+    font-weight: 200;
     background: transparent;
     width: 75%;
     outline: none;

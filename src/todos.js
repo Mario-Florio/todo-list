@@ -1,4 +1,4 @@
-import { format, isToday, isPast, endOfHour, addSeconds, isValid, isThisWeek, startOfDay, addDays, isSunday, isMonday, isTuesday, isWednesday, isThursday, isFriday, isSaturday } from 'date-fns'
+import { format, isToday, isPast, endOfHour, addSeconds, isValid, isThisWeek, startOfDay, addDays, isSunday, isMonday, isTuesday, isWednesday, isThursday, isFriday, isSaturday, formatDistance } from 'date-fns'
 import { events } from './pub-sub'
 
 class TodoList {
@@ -34,6 +34,14 @@ class TodoList {
             }
         })
         return favoriteTodos
+    }
+    pastDue() {
+        let pastDue = this.all.filter(todo => {
+            if (todo.pastDue()) {
+                return todo
+            }
+        })
+        return pastDue
     }
 }
 
@@ -94,7 +102,9 @@ const projects = []
 //Bind Events
 window.addEventListener('load', () => {
     let todaysDate = format(new Date(), 'd')
+    let nextHour = format(addSeconds(endOfHour(new Date()), 1), 'h:mm a')
     events.emit('setDate', todaysDate)
+    events.emit('setTime', nextHour)
 })
 
     //Todos
@@ -155,6 +165,7 @@ events.on('todoTicketDeleted', function(todoTicketData) {
     todoList.all.filter(todo => {
         if (todo.id === todoTicketData.id) {
             todoList.all.splice(todoList.all.indexOf(todo), 1)
+            console.log(todoList)
             events.emit('todoListUpdated', todoList)
         }
         projects.forEach(project => {
@@ -251,35 +262,38 @@ function cloneTodo(todo) {
     return todoClone
 }
 
-function convertData(data) {//Refactor with switch case
-    if (isToday(new Date(data))) {
+function convertData(date) {
+    if (isToday(new Date(date))) {
         return 'Today'
     }
-    if (isThisWeek(new Date(data)) && isSunday(new Date(data))) {
-        return 'Sunday'
+    if (isThisWeek(new Date(date)) && !isPast(new Date(date))) {//This week but not previous days of this week
+        switch (new Date(date).getDay()) {
+            case 0:
+                date = "Sunday"
+                break;
+            case 1:
+                date = "Monday"
+                break;
+            case 2:
+                date = "Tuesday"
+                break;
+            case 3:
+                date = "Wednesday"
+                break;
+            case 4:
+                date = "Thursday"
+                break;
+            case 5:
+                date = "Friday"
+                break;
+            case 6:
+                date = "Saturday"
+        }
     }
-    if (isThisWeek(new Date(data)) && isMonday(new Date(data))) {
-        return 'Monday'
-    }
-    if (isThisWeek(new Date(data)) && isTuesday(new Date(data))) {
-        return 'Tuesday'
-    }
-    if (isThisWeek(new Date(data)) && isWednesday(new Date(data))) {
-        return 'Wednesday'
-    }
-    if (isThisWeek(new Date(data)) && isThursday(new Date(data))) {
-        return 'Thursday'
-    }
-    if (isThisWeek(new Date(data)) && isFriday(new Date(data))) {
-        return 'Friday'
-    }
-    if (isThisWeek(new Date(data)) && isSaturday(new Date(data))) {
-        return 'Saturday'
-    }
-    return data
+    return date
 }
 
-function inputConverter(input) {//Refactor with switch case
+function inputConverter(input) {
     if (input === 'today') {
         return format(new Date(), 'M/d/yyyy')
     }
