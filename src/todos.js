@@ -46,6 +46,11 @@ class TodoList {
 }
 
 const todoList = new TodoList()
+const LOCAL_STORAGE_LIST_KEY = 'todoList.todoList'
+function saveTodoList() {
+    let todoListSerialized = JSON.stringify(todoList.all)
+    localStorage.setItem(LOCAL_STORAGE_LIST_KEY, todoListSerialized)
+}
 
 export class Todo {
     constructor(task, date, time, id) {
@@ -108,6 +113,18 @@ window.addEventListener('load', () => {
     events.emit('setTime', nextHour)
 })
 
+window.addEventListener('load', () => {
+    let todoListDeserialized = JSON.parse(localStorage.getItem(LOCAL_STORAGE_LIST_KEY))
+    let todoListAllClone = todoListDeserialized || []
+    todoListAllClone.forEach(todo => {
+        if (todo.project) {
+            events.emit('projectSubmitted', todo.project)
+        }
+        todo.type = 'Create'
+        events.emit('todoSubmitted', todo)
+    })
+})
+
     //Todos
 events.on('todoSubmitted', function parseDateTime(todoData) {
     if (todoData.date === '') {
@@ -159,6 +176,7 @@ events.on('date&timeInputParsed-CreateTodo', function createTodo(newTodoData) {
         }
     }
     todoList.all.push(newTodo)
+    saveTodoList()
     let newTodoClone = cloneTodo(newTodo)
     newTodoClone.date = convertData(newTodoData.date)
     events.emit('todoListUpdated', todoList)
@@ -181,7 +199,9 @@ events.on('date&timeParsed-UpdateTodo', function(editedTodoData) {
             } else {
                 todo.removeFavorite()
             }
-            projects.forEach(project => {//Refactor
+            saveTodoList()
+            //Refactor
+            projects.forEach(project => {
                 if (project.name === todo.project) {
                     project.removeTodo(todo)
                     events.emit('projectUpdated', project)
@@ -208,8 +228,8 @@ events.on('todoTicketDeleted', function(todoTicketData) {
     todoList.all.filter(todo => {
         if (todo.id === todoTicketData.id) {
             todoList.all.splice(todoList.all.indexOf(todo), 1)
+            saveTodoList()
             events.emit('todoListUpdated', todoList)
-            
         }
     })
     projects.forEach(project => {
