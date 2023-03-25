@@ -95,11 +95,8 @@ class Project extends TodoList {
     }
     removeTodo(todoToRemove) {
         delete todoToRemove.project
-        this.all.forEach(todo => {
-            if (todo.id === todoToRemove.id) {
-                this.all.splice(this.all.indexOf(todo), 1)
-            }
-        })
+        let todoToRemoveIndex = this.all.findIndex(todo => todo.id === todoToRemove.id)
+        this.all.splice(todoToRemoveIndex, 1)
     }
 }
 
@@ -199,11 +196,10 @@ events.on('date&timeParsed-UpdateTodo', function(editedTodoData) {
             } else {
                 todo.removeFavorite()
             }
-            saveTodoList()
-            //Refactor
             projects.forEach(project => {
                 if (project.name === todo.project) {
                     project.removeTodo(todo)
+                    events.emit('todoDeleted-Project', project)
                     events.emit('projectUpdated', project)
                 }
             })
@@ -216,6 +212,7 @@ events.on('date&timeParsed-UpdateTodo', function(editedTodoData) {
                     }
                 }
             }
+            saveTodoList()
             let todoClone = cloneTodo(todo)
             todoClone.date = convertData(editedTodoData.date)
             events.emit('todoListUpdated', todoList)
@@ -225,19 +222,18 @@ events.on('date&timeParsed-UpdateTodo', function(editedTodoData) {
 })
 
 events.on('todoTicketDeleted', function(todoTicketData) {
-    todoList.all.filter(todo => {
-        if (todo.id === todoTicketData.id) {
-            todoList.all.splice(todoList.all.indexOf(todo), 1)
-            saveTodoList()
-            events.emit('todoListUpdated', todoList)
-        }
-    })
-    projects.forEach(project => {
-        if (todoTicketData.project === project.name) {
-            project.removeTodo(todoTicketData)
-            events.emit('projectUpdated', project)
-        }
-    })
+    (function deleteFromTodoList() {
+        let index = todoList.all.findIndex(todo => todo.id === todoTicketData.id)
+        todoList.all.splice(index, 1)
+        saveTodoList()
+        events.emit('todoListUpdated', todoList)
+    })()
+    if (todoTicketData.project) {
+        let todosProject = projects.find(project => project.name === todoTicketData.project)
+        todosProject.removeTodo(todoTicketData)
+        events.emit('todoDeleted-Project', todosProject)
+        events.emit('projectUpdated', todosProject)
+    }
 })
 
     //Projects
@@ -252,6 +248,21 @@ events.on('projectSubmitted', function(projectName) {
         newProject.id = format(new Date(), 'm/d/yyyy HH:mm:ss:SSSS')
         projects.push(newProject)
         events.emit('projectCreated', newProject)
+    }
+})
+
+events.on('projectNameEdited', function(editedProject) {
+    let project = projects.find(project => project.id === editedProject.id)
+    project.name = editedProject.name
+    project.all.forEach(todo => todo.project = project.name)
+    saveTodoList()
+})
+
+events.on('todoDeleted-Project', function(project) {
+    if (project.all.length === 0) {
+        events.emit('projectDeleted', project)
+        let index = projects.findIndex(item => item.id === project.id)
+        projects.splice(index, 1)
     }
 })
 

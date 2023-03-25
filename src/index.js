@@ -1,10 +1,12 @@
 import './style.css'
 import { createPage, render } from './global-functions'
 import { navbar } from "./navbar/navbar"
-import { sideMenu } from './side-menu/side-menu'
+import { sideMenuModule } from './side-menu/side-menu'
 import { header } from './header/header'
 import { todoTicketSectionModule } from './todo-tickets/todo-tickets'
 import { Todo } from './todos'
 
-let homePage = createPage([navbar, sideMenu, header, todoTicketSectionModule.todoTicketSection])
+console.log(sideMenuModule)
+
+let homePage = createPage([navbar, sideMenuModule, header, todoTicketSectionModule.todoTicketSection])
 render(homePage)

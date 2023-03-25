@@ -2,9 +2,10 @@ import { createHTML } from '../global-functions'
 import { events } from '../pub-sub'
 import './side-menu.css'
 
-export const sideMenu = createHTML(`
-    <div class="side-menu"></div>
-`)
+const sideMenuModule = (function() {
+    const sideMenu = createHTML(`
+        <div class="side-menu"></div>
+    `)
 
 const mainLinks = createHTML(`
     <div class="side-menu-main-links">
@@ -61,38 +62,9 @@ const projectsSection = createHTML(`
         </div>
         <div class="project-dropdown-menu">
             <div class="project-links"></div>
-            <form class="add-project-form">
-                <div class="side-menu-links-left-container">
-                    <input id="project-input" type="text" name="project-name" placeholder="New Project"/>
-                </div>
-                <button id="add-project-button">
-                    <div class="add-project-button-bar1"></div>
-                    <div class="add-project-button-bar2"></div>
-                </button>
-            </form>
         </div>
     </div>
 `)
-
-function createProjectLink(project) {
-    let projectLink = createHTML(`
-        <div class="project-links" data-project="${project.name}">
-            <div class="side-menu-links">
-                <div class="side-menu-links-left-container">${project.name}</div>
-                <div class="side-menu-links-right-container"></div>
-            </div>
-        </div>
-    `)
-    projectLink.addEventListener('click', (e) => {
-        let selectedTodolist = {
-            selectedSort: 'All',
-            selectedProject: e.target.closest('.project-links').dataset.project
-        }
-        events.emit('projectSelected', selectedTodolist.selectedProject)
-        events.emit('todolistSelected', selectedTodolist)
-    })
-    return projectLink
-}
 
 sideMenu.appendChild(mainLinks)
 sideMenu.appendChild(projectsSection)
@@ -107,8 +79,6 @@ const favoritesQuantity = mainLinks.children[5].children[1]
 const projectsSectionHeader = projectsSection.children[0]
 const dropdownArrow = projectsSection.children[0].children[0]
 const projectLinks = projectsSection.children[1].children[0]
-const addProjectInput = projectsSection.children[1].children[1].children[0].children[0]
-const addProjectButton = projectsSection.children[1].children[1].children[1]
 
 //Bind Events
 events.on('hamburgerMenuToggled', function openSideMenu() {
@@ -127,7 +97,15 @@ events.on('setDate', function updateTodayIcon(todaysDate) {
 events.on('projectUpdated', function updateProjectQuantities(project) {
     for (let link of projectLinks.children) {
         if (link.id === project.id) {
-            link.children[0].children[1].textContent = project.all.length 
+            link.children[0].children[2].textContent = project.all.length 
+        }
+    }
+})
+
+events.on('projectDeleted', function(project) {
+    for (let link of projectLinks.children) {
+        if (link.id === project.id) {
+            projectsSection.children[1].children[0].removeChild(link)
         }
     }
 })
@@ -160,15 +138,6 @@ events.on('todoListUpdated', function updateQuantities(todoList) {
     }
 })
 
-addProjectButton.addEventListener('click', (e) => {
-    e.preventDefault()
-    if (addProjectInput.value !== '') {
-        let newProjectName = addProjectInput.value
-        addProjectInput.value = ''
-        events.emit('projectSubmitted', newProjectName)
-    }
-})
-
 events.on('projectCreated', function(newProject) {
     let newProjectLink = createProjectLink(newProject)
     newProjectLink.id = newProject.id
@@ -182,4 +151,55 @@ for (let link of mainLinks.children) {
         let selectedSort = e.target.closest('.side-menu-links').dataset.sort
         events.emit('sortSelected', selectedSort)
     })
+}
+return sideMenu
+
+})()
+
+export {
+    sideMenuModule
+}
+
+function createProjectLink(project) {
+    let projectLink = createHTML(`
+        <div class="project-links" data-project="${project.name}">
+            <div class="side-menu-links">
+                <div class="side-menu-links-left-container">${project.name}</div>
+                <button class="project-link-confirm-button">Confirm</button>
+                <div class="side-menu-links-right-container"></div>
+            </div>
+        </div>
+    `)
+    //Cache HTML
+    const projectLinkName = projectLink.children[0].children[0]
+    const confirmButton = projectLink.children[0].children[1]
+
+    //Bind Events
+    projectLink.addEventListener('click', (e) => {
+        let selectedTodolist = {
+            selectedSort: 'All',
+            selectedProject: e.target.closest('.project-links').dataset.project
+        }
+        events.emit('projectSelected', selectedTodolist.selectedProject)
+        events.emit('todolistSelected', selectedTodolist)
+    })
+
+    projectLinkName.addEventListener('dblclick', () => {
+        projectLinkName.contentEditable = true
+        projectLinkName.classList.add('input-active')
+        confirmButton.classList.add('project-link-confirm-button-active')
+    })
+
+    confirmButton.addEventListener('click', () => {
+        projectLinkName.contentEditable = false
+        projectLinkName.classList.remove('input-active')
+        confirmButton.classList.remove('project-link-confirm-button-active')
+        let editedProject = {
+            name: projectLinkName.textContent,
+            id: projectLinkName.closest('.project-links').id
+        }
+        events.emit('projectNameEdited', editedProject)
+    })
+
+    return projectLink
 }

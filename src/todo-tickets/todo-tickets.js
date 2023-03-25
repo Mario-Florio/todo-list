@@ -248,7 +248,7 @@ const createTodoTicket = function(todoData) {
                 todoTicketDate.classList.remove('date-past-due')
                 todoTicketTime.classList.remove('time-past-due')
             }
-            todoData = todoClone//Refactor to make more sense (changes todoData of ticket)
+            //todoData = todoClone//Changes todoData of ticket
         }
     })
 
