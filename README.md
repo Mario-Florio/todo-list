@@ -7,3 +7,5 @@ User can select a variey of sorts to display tasks (e.g. due today, upcoming, fa
 - How to build a basic CRUD app
 - How to utilize design patterns to decouple code (e.g. ES6 Modules, Modular Design Pattern and PubSub)
 - How to utilize CSS animations to make for a more clean & fluid UI/UX
+
+Live site: mario-florio.github.io/todo-list/
