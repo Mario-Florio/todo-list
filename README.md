@@ -8,4 +8,4 @@ User can select a variey of sorts to display tasks (e.g. due today, upcoming, fa
 - How to utilize design patterns to decouple code (e.g. ES6 Modules, Modular Design Pattern and PubSub)
 - How to utilize CSS animations to make for a more clean & fluid UI/UX
 
-Live site: https://www.mario-florio.github.io/todo-list/
+Live site: https://mario-florio.github.io/todo-list/
