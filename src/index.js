@@ -1,5 +1,4 @@
 import './style.css';
-import { createPage, render } from './global-functions';
 import { navbar } from './navbar/navbar';
 import { sideMenuModule } from './side-menu/side-menu';
 import { header } from './header/header';
