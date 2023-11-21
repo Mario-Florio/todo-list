@@ -1,12 +1,21 @@
-import './style.css'
-import { createPage, render } from './global-functions'
-import { navbar } from "./navbar/navbar"
-import { sideMenuModule } from './side-menu/side-menu'
-import { header } from './header/header'
-import { todoTicketSectionModule } from './todo-tickets/todo-tickets'
-import { Todo } from './todos'
+import './style.css';
+import { createPage, render } from './global-functions';
+import { navbar } from './navbar/navbar';
+import { sideMenuModule } from './side-menu/side-menu';
+import { header } from './header/header';
+import { todoTicketSectionModule } from './todo-tickets/todo-tickets';
+import { Todo } from './todos';
 
-// Test
+const body = document.querySelector('body');
+const root = document.createElement('div');
+root.id = 'root'
+body.append(root);
 
-let homePage = createPage([navbar, sideMenuModule, header, todoTicketSectionModule.todoTicketSection])
-render(homePage)
+let homePage = [
+    navbar, 
+    sideMenuModule, 
+    header, 
+    todoTicketSectionModule.todoTicketSection
+];
+
+homePage.map(components => root.append(components));
