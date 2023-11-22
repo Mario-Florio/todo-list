@@ -8,38 +8,38 @@ function TodoTicket(todoData) {
     const todoTicket = createHTML(`
         <form class="todo-ticket new-todo-ticket">
             <div style="display: flex; justify-content: space-between; align-items: center">
-                <div class="todo-ticket-left-container">
+                <div class="left-container">
                     <input type="radio" class="todo-completed"/>
                     <div>
                         <div style="display: flex">
-                            <div class="todo-ticket-priority">!</div>
-                            <div class="todo-ticket-favorite"></div>
-                            <div type="text" class="todo-ticket-task">${todoData.task}</div>
+                            <div class="priority-display">!</div>
+                            <div class="favorite-display"></div>
+                            <div type="text" class="task">${todoData.task}</div>
                         </div>
                         <div style="display: flex; justify-contents: space-between">
-                            <div class="todo-ticket-date">${todoData.date}</div>
-                            <div class="todo-ticket-time" style="margin-left: 5px">${todoData.time}</div>
+                            <div class="date">${todoData.date}</div>
+                            <div class="time" style="margin-left: 5px">${todoData.time}</div>
                         </div>
                     </div>
                 </div>
-                <div class="todo-ticket-right-container">
-                    <div class="todo-ticket-project">${todoData.project}</div>
+                <div class="right-container">
+                    <div class="project">${todoData.project}</div>
                 </div>
             </div>
-            <div class="form-box">
+            <div class="favorite-priority-container">
                 <div style="display: flex; align-items: center; margin: 10px 0 0 55px">
                     <div style="display: flex; align-items: center">
                         <label for="priority" style="margin-left: 4px">!</label>
-                        <input class="add-todo-form-priority-input" name="priority" type="checkbox" value="important"/>
+                        <input name="priority" type="checkbox" value="important"/>
                     </div>
                     <div style="display: flex; align-items: center">
                         <label class="favorite-label" for="favorite"></label>
-                        <input class="add-todo-form-favorite-input" name="favorite" type="checkbox" value="favorite"/>
+                        <input name="favorite" type="checkbox" value="favorite"/>
                     </div>
                 </div>
                 <div style="margin-top: 10px">
-                    <button class="add-todo-form-button">Cancel</button>
-                    <button class="add-todo-form-button">Confirm</button>
+                    <button>Cancel</button>
+                    <button>Confirm</button>
                 </div>
             </div>
         </form>
@@ -47,13 +47,6 @@ function TodoTicket(todoData) {
 
     setPriorityIcon(todoTicket, todoData);
     setFavoriteIcon(todoTicket, todoData);
-
-    if (todoData.pastDue()) {
-        let todoTicketDate = todoTicket.children[0].children[0].children[1].children[1].children[0];
-        let todoTicketTime = todoTicket.children[0].children[0].children[1].children[1].children[1];
-        todoTicketDate.classList.add('date-past-due');
-        todoTicketTime.classList.add('time-past-due');
-    }
 
     todoTicket.id = todoData.id;
 
@@ -69,9 +62,18 @@ function TodoTicket(todoData) {
     const todoTicketFormBoxCancelButton = todoTicket.children[1].children[1].children[0];
     const todoTicketFormBoxSubmitButton = todoTicket.children[1].children[1].children[1];
 
+    if (todoData.pastDue()) {
+        todoTicketDate.classList.add('date-past-due');
+        todoTicketTime.classList.add('time-past-due');
+    }
+
     //Bind Events
     todoTicket.addEventListener('click', (e) => {
-        if (e.target !== todoCompletedButton && e.target !== todoTicketFormBoxCancelButton && e.target !== todoTicketFormBoxSubmitButton) {
+        if (
+                e.target !== todoCompletedButton &&
+                e.target !== todoTicketFormBoxCancelButton &&
+                e.target !== todoTicketFormBoxSubmitButton
+            ) {
             let editableEls = [
                 todoTicketTask,
                 todoTicketDate,
@@ -88,7 +90,7 @@ function TodoTicket(todoData) {
             todoTicketDate.dataset.placeholder = 'Edit Date';
             todoTicketTime.dataset.placeholder = 'Edit Time';
             todoTicketProject.dataset.placeholder = 'Edit Project';
-            todoTicketFormBox.classList.add('form-box-active');
+            todoTicketFormBox.classList.add('favorite-priority-container-active');
         }
     });
 
@@ -158,14 +160,14 @@ function TodoTicket(todoData) {
             el.contentEditable = false;
         });
 
-        todoTicketFormBox.classList.remove('form-box-active');
+        todoTicketFormBox.classList.remove('favorite-priority-container-active');
         todoTicketTask.textContent = todoData.task;
         todoTicketDate.textContent = todoData.date;
         todoTicketTime.textContent = todoData.time;
         todoTicketProject.textContent = todoData.project;
         const priorityIconEl = todoTicket.children[0].children[0].children[1].children[0].children[0];
 
-        if (priorityIconEl.classList.contains('todo-ticket-priority-active')) {
+        if (priorityIconEl.classList.contains('priority-display-active')) {
             todoTicketPriorityInput.checked = true;
         } else {
             todoTicketPriorityInput.checked = false;
@@ -173,7 +175,7 @@ function TodoTicket(todoData) {
 
         const favoriteIconEl = todoTicket.children[0].children[0].children[1].children[0].children[1];
 
-        if (favoriteIconEl.classList.contains('todo-ticket-favorite-active')) {
+        if (favoriteIconEl.classList.contains('favorite-display-active')) {
             todoTicketFavoriteInput.checked = true;
         } else {
             todoTicketFavoriteInput.checked = false;
@@ -186,10 +188,10 @@ function TodoTicket(todoData) {
         const todoTicketPriorityInput = todoTicket.children[1].children[0].children[0].children[1];
 
         if (todo.priority === true) {
-            priorityIconEl.classList.add('todo-ticket-priority-active');
+            priorityIconEl.classList.add('priority-display-active');
             todoTicketPriorityInput.checked = true;
         } else {
-            priorityIconEl.classList.remove('todo-ticket-priority-active');
+            priorityIconEl.classList.remove('priority-display-active');
             todoTicketPriorityInput.checked = false;
         }
     }
@@ -200,10 +202,10 @@ function TodoTicket(todoData) {
         const todoTicketFavoriteInput = todoTicket.children[1].children[0].children[1].children[1];
 
         if (todo.favorite === true) {
-            favoriteIconEl.classList.add('todo-ticket-favorite-active');
+            favoriteIconEl.classList.add('favorite-display-active');
             todoTicketFavoriteInput.checked = true;
         } else {
-            favoriteIconEl.classList.remove('todo-ticket-favorite-active');
+            favoriteIconEl.classList.remove('favorite-display-active');
             todoTicketFavoriteInput.checked = false;
         }
     }
