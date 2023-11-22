@@ -2,7 +2,7 @@ import { createHTML } from "../global-functions";
 import { events } from "../pub-sub";
 import "./todo-tickets.css";
 
-const todoTicketSectionModule = (function() {
+const todoTicketSection = (function() {
 
     const todoTicketSection = createHTML(`
         <div class="todo-ticket-section"></div>
@@ -109,16 +109,11 @@ const todoTicketSectionModule = (function() {
         addTodoFormFavoriteInput.checked = false;
     }
 
-    return {
-        todoTicketSection,
-        todoTicketContainer
-    }
+    return todoTicketSection;
 
 })();
 
-export {
-    todoTicketSectionModule
-}
+export { todoTicketSection }
 
 //Todo Ticket Module
 const createTodoTicket = function(todoData) {
@@ -201,7 +196,7 @@ const createTodoTicket = function(todoData) {
                 el.contentEditable = true;
                 el.classList.add('input-active');
             });
-            
+
             todoTicketTask.dataset.placeholder = 'Edit Task';
             todoTicketDate.dataset.placeholder = 'Edit Date';
             todoTicketTime.dataset.placeholder = 'Edit Time';
@@ -218,7 +213,7 @@ const createTodoTicket = function(todoData) {
     todoCompletedButton.addEventListener('click', () => {
         todoTicket.classList.add('remove-todo-ticket');
         setTimeout(function() {
-            todoTicketSectionModule.todoTicketContainer.removeChild(todoTicket); 
+            todoTicketSection.children[0].removeChild(todoTicket); 
             events.emit('todoTicketDeleted', todoData);
         }, 500);
     });
