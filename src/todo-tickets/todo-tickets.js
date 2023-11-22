@@ -12,7 +12,7 @@ const todoTicketSection = (function() {
         <div class="todo-ticket-container"></div>
     `);
 
-    const addTodoFormTicket = createHTML(`
+    const todoTicketForm = createHTML(`
         <div id="add-todo-form-ticket">
             <form class="add-todo-form">
                 <fieldset class="add-todo-form-required">
@@ -41,34 +41,35 @@ const todoTicketSection = (function() {
     `);
 
     todoTicketSection.appendChild(todoTicketContainer);
-    todoTicketSection.appendChild(addTodoFormTicket);
+    todoTicketSection.appendChild(todoTicketForm);
 
     //Cache HTML
-    const addTodoFormTicketButton = addTodoFormTicket.children[1]
-    const addTodoForm = addTodoFormTicket.children[0]
-    const addTodoFormRequiredFields = addTodoFormTicket.children[0].children[0]
-    const addTodoFormTaskInput = addTodoForm.children[0].children[0]
-    const addTodoFormSubmitButton = addTodoForm.children[0].children[1]
-    const addTodoFormOptionalFields = addTodoForm.children[1]
-    const addTodoFormDateInput = addTodoFormOptionalFields.children[0]
-    const addTodoFormTimeInput = addTodoFormOptionalFields.children[1]
-    const addTodoFormProjectInput = addTodoFormOptionalFields.children[2]
-    const addTodoFormPriorityInput = addTodoFormOptionalFields.children[3].children[1]
-    const addTodoFormFavoriteInput = addTodoFormOptionalFields.children[4].children[1]
+    const todoTicketFormButton = todoTicketForm.children[1];
+    const addTodoForm = todoTicketForm.children[0];
+    const addTodoFormRequiredFields = todoTicketForm.children[0].children[0];
+    const addTodoFormTaskInput = addTodoForm.children[0].children[0];
+    const addTodoFormSubmitButton = addTodoForm.children[0].children[1];
+    const addTodoFormOptionalFields = addTodoForm.children[1];
+    const addTodoFormDateInput = addTodoFormOptionalFields.children[0];
+    const addTodoFormTimeInput = addTodoFormOptionalFields.children[1];
+    const addTodoFormProjectInput = addTodoFormOptionalFields.children[2];
+    const addTodoFormPriorityInput = addTodoFormOptionalFields.children[3].children[1];
+    const addTodoFormFavoriteInput = addTodoFormOptionalFields.children[4].children[1];
 
     //Bind Events
     events.on('setTime', function(nextHour) {
-        addTodoFormTimeInput.placeholder = nextHour
+        addTodoFormTimeInput.placeholder = nextHour;
     });
 
-    addTodoFormTicketButton.addEventListener('click', () => {
-        addTodoFormTicketButton.classList.toggle('open-form-button-pressed')
-        addTodoFormRequiredFields.classList.toggle('add-todo-form-required-active')
-        addTodoFormOptionalFields.classList.toggle('add-todo-form-optional-active')
+    todoTicketFormButton.addEventListener('click', () => {
+        todoTicketFormButton.classList.toggle('open-form-button-pressed');
+        addTodoFormRequiredFields.classList.toggle('add-todo-form-required-active');
+        addTodoFormOptionalFields.classList.toggle('add-todo-form-optional-active');
     });
 
     addTodoFormSubmitButton.addEventListener('click', (e) => {
-        e.preventDefault()
+        e.preventDefault();
+
         let newTodoData = {
             task: addTodoFormTaskInput.value.trim(),
             date: addTodoFormDateInput.value.toLowerCase().trim(),
@@ -78,14 +79,17 @@ const todoTicketSection = (function() {
             project: addTodoFormProjectInput.value.trim(),
             type: 'Create'
         }
+
         events.emit('projectSubmitted', newTodoData.project);
         events.emit('todoSubmitted', newTodoData);
+
         resetForm();
     });
 
     events.on('todoCreated', function(newTodo) {
         let newTodoTicket = createTodoTicket(newTodo);
         todoTicketContainer.appendChild(newTodoTicket);
+
         resetForm();
     });
 
@@ -110,7 +114,6 @@ const todoTicketSection = (function() {
     }
 
     return todoTicketSection;
-
 })();
 
 export { todoTicketSection }
