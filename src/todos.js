@@ -20,7 +20,7 @@ import { events } from './pub-sub';
 
 class TodoList {
     constructor() {
-        all = [];
+        this.all = [];
     }
 
     dueToday() {
@@ -527,6 +527,6 @@ function inputConverter(input) {
             }
         }
     }
-    
+
     return input;
 }
