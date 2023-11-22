@@ -76,7 +76,7 @@ function TodoTicket(todoData) {
                 todoTicketTask,
                 todoTicketDate,
                 todoTicketTime,
-                todoTicketProject
+                todoTicketProject,
             ];
 
             editableEls.forEach(el => {
@@ -150,7 +150,7 @@ function TodoTicket(todoData) {
             todoTicketTask,
             todoTicketDate,
             todoTicketTime,
-            todoTicketProject
+            todoTicketProject,
         ];
 
         editableEls.forEach(el => {
