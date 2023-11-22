@@ -1,16 +1,16 @@
 import { createHTML } from "../global-functions";
 import { events } from "../pub-sub";
-import "./todo-tickets.css"
+import "./todo-tickets.css";
 
 const todoTicketSectionModule = (function() {
 
     const todoTicketSection = createHTML(`
         <div class="todo-ticket-section"></div>
-    `)
+    `);
 
     const todoTicketContainer = createHTML(`
         <div class="todo-ticket-container"></div>
-    `)
+    `);
 
     const addTodoFormTicket = createHTML(`
         <div id="add-todo-form-ticket">
@@ -38,13 +38,12 @@ const todoTicketSectionModule = (function() {
                 <div class="open-form-button-bar2"></div>
             </div>
         </div>
-    `)
+    `);
 
-    todoTicketSection.appendChild(todoTicketContainer)
-    todoTicketSection.appendChild(addTodoFormTicket)
+    todoTicketSection.appendChild(todoTicketContainer);
+    todoTicketSection.appendChild(addTodoFormTicket);
 
     //Cache HTML
-        //Refactor variables so they are not dependent on each other
     const addTodoFormTicketButton = addTodoFormTicket.children[1]
     const addTodoForm = addTodoFormTicket.children[0]
     const addTodoFormRequiredFields = addTodoFormTicket.children[0].children[0]
@@ -60,13 +59,13 @@ const todoTicketSectionModule = (function() {
     //Bind Events
     events.on('setTime', function(nextHour) {
         addTodoFormTimeInput.placeholder = nextHour
-    })
+    });
 
     addTodoFormTicketButton.addEventListener('click', () => {
         addTodoFormTicketButton.classList.toggle('open-form-button-pressed')
         addTodoFormRequiredFields.classList.toggle('add-todo-form-required-active')
         addTodoFormOptionalFields.classList.toggle('add-todo-form-optional-active')
-    })
+    });
 
     addTodoFormSubmitButton.addEventListener('click', (e) => {
         e.preventDefault()
@@ -79,35 +78,35 @@ const todoTicketSectionModule = (function() {
             project: addTodoFormProjectInput.value.trim(),
             type: 'Create'
         }
-        events.emit('projectSubmitted', newTodoData.project)
-        events.emit('todoSubmitted', newTodoData)
-        resetForm()
-    })
+        events.emit('projectSubmitted', newTodoData.project);
+        events.emit('todoSubmitted', newTodoData);
+        resetForm();
+    });
 
     events.on('todoCreated', function(newTodo) {
-        let newTodoTicket = createTodoTicket(newTodo)
-        todoTicketContainer.appendChild(newTodoTicket)
-        resetForm()
-    })
+        let newTodoTicket = createTodoTicket(newTodo);
+        todoTicketContainer.appendChild(newTodoTicket);
+        resetForm();
+    });
 
     events.on('displayTodoList', function(todoList) {
         while (todoTicketContainer.hasChildNodes()) {
-            todoTicketContainer.removeChild(todoTicketContainer.firstChild)
+            todoTicketContainer.removeChild(todoTicketContainer.firstChild);
         }
         todoList.forEach(todo => {
-            let todoTicket = createTodoTicket(todo)
-            todoTicketContainer.appendChild(todoTicket)
-        })
-    })
+            let todoTicket = createTodoTicket(todo);
+            todoTicketContainer.appendChild(todoTicket);
+        });
+    });
 
     //Utility
     function resetForm() {
-        addTodoFormTaskInput.value = ''
-        addTodoFormDateInput.value = ''
-        addTodoFormTimeInput.value = ''
-        addTodoFormProjectInput.value = ''
-        addTodoFormPriorityInput.checked = false
-        addTodoFormFavoriteInput.checked = false
+        addTodoFormTaskInput.value = '';
+        addTodoFormDateInput.value = '';
+        addTodoFormTimeInput.value = '';
+        addTodoFormProjectInput.value = '';
+        addTodoFormPriorityInput.checked = false;
+        addTodoFormFavoriteInput.checked = false;
     }
 
     return {
@@ -115,7 +114,7 @@ const todoTicketSectionModule = (function() {
         todoTicketContainer
     }
 
-})()
+})();
 
 export {
     todoTicketSectionModule
@@ -162,28 +161,31 @@ const createTodoTicket = function(todoData) {
                 </div>
             </div>
         </form>
-    `)
-    setPriorityIcon(todoTicket, todoData)
-    setFavoriteIcon(todoTicket, todoData)
+    `);
+
+    setPriorityIcon(todoTicket, todoData);
+    setFavoriteIcon(todoTicket, todoData);
+
     if (todoData.pastDue()) {
-        let todoTicketDate = todoTicket.children[0].children[0].children[1].children[1].children[0]
-        let todoTicketTime = todoTicket.children[0].children[0].children[1].children[1].children[1]
-        todoTicketDate.classList.add('date-past-due')
-        todoTicketTime.classList.add('time-past-due')
+        let todoTicketDate = todoTicket.children[0].children[0].children[1].children[1].children[0];
+        let todoTicketTime = todoTicket.children[0].children[0].children[1].children[1].children[1];
+        todoTicketDate.classList.add('date-past-due');
+        todoTicketTime.classList.add('time-past-due');
     }
-    todoTicket.id = todoData.id
+
+    todoTicket.id = todoData.id;
 
     //Cache HTML
-    const todoTicketTask = todoTicket.children[0].children[0].children[1].children[0].children[2]
-    const todoTicketDate = todoTicket.children[0].children[0].children[1].children[1].children[0]
-    const todoTicketTime = todoTicket.children[0].children[0].children[1].children[1].children[1]
-    const todoCompletedButton = todoTicket.children[0].children[0].children[0]
-    const todoTicketProject = todoTicket.children[0].children[1].children[0]
-    const todoTicketFormBox = todoTicket.children[1]
-    const todoTicketFavoriteInput = todoTicket.children[1].children[0].children[1].children[1]
-    const todoTicketPriorityInput = todoTicket.children[1].children[0].children[0].children[1]
-    const todoTicketFormBoxCancelButton = todoTicket.children[1].children[1].children[0]
-    const todoTicketFormBoxSubmitButton = todoTicket.children[1].children[1].children[1]
+    const todoTicketTask = todoTicket.children[0].children[0].children[1].children[0].children[2];
+    const todoTicketDate = todoTicket.children[0].children[0].children[1].children[1].children[0];
+    const todoTicketTime = todoTicket.children[0].children[0].children[1].children[1].children[1];
+    const todoCompletedButton = todoTicket.children[0].children[0].children[0];
+    const todoTicketProject = todoTicket.children[0].children[1].children[0];
+    const todoTicketFormBox = todoTicket.children[1];
+    const todoTicketFavoriteInput = todoTicket.children[1].children[0].children[1].children[1];
+    const todoTicketPriorityInput = todoTicket.children[1].children[0].children[0].children[1];
+    const todoTicketFormBoxCancelButton = todoTicket.children[1].children[1].children[0];
+    const todoTicketFormBoxSubmitButton = todoTicket.children[1].children[1].children[1];
 
     //Bind Events
     todoTicket.addEventListener('click', (e) => {
@@ -193,119 +195,136 @@ const createTodoTicket = function(todoData) {
                 todoTicketDate,
                 todoTicketTime,
                 todoTicketProject
-            ]
+            ];
+
             editableEls.forEach(el => {
-                el.contentEditable = true
-                el.classList.add('input-active')
-            })
-            todoTicketTask.dataset.placeholder = 'Edit Task'
-            todoTicketDate.dataset.placeholder = 'Edit Date'
-            todoTicketTime.dataset.placeholder = 'Edit Time'
-            todoTicketProject.dataset.placeholder = 'Edit Project'
-            todoTicketFormBox.classList.add('form-box-active')
+                el.contentEditable = true;
+                el.classList.add('input-active');
+            });
+            
+            todoTicketTask.dataset.placeholder = 'Edit Task';
+            todoTicketDate.dataset.placeholder = 'Edit Date';
+            todoTicketTime.dataset.placeholder = 'Edit Time';
+            todoTicketProject.dataset.placeholder = 'Edit Project';
+            todoTicketFormBox.classList.add('form-box-active');
         }
-    })
+    });
 
     todoTicketFormBoxCancelButton.addEventListener('click', (e) => {
-        e.preventDefault()
-        resetForm()
-    })
+        e.preventDefault();
+        resetForm();
+    });
 
     todoCompletedButton.addEventListener('click', () => {
-        todoTicket.classList.add('remove-todo-ticket')
-        setTimeout(function() {todoTicketSectionModule.todoTicketContainer.removeChild(todoTicket), events.emit('todoTicketDeleted', todoData)}, 500)
-    })
+        todoTicket.classList.add('remove-todo-ticket');
+        setTimeout(function() {
+            todoTicketSectionModule.todoTicketContainer.removeChild(todoTicket); 
+            events.emit('todoTicketDeleted', todoData);
+        }, 500);
+    });
 
     todoTicketFormBoxSubmitButton.addEventListener('click', (e) => {
-        e.preventDefault()
+        e.preventDefault();
+
         let editedTodoData = {
-            id: todoTicket.id, //Changed from "todoData.id"; change back if any issues
+            id: todoTicket.id,
             task: todoTicketTask.textContent.trim(),
             date: todoTicketDate.textContent.toLowerCase().trim(),
             time: todoTicketTime.textContent.trim(),
             priority: todoTicketPriorityInput.checked,
             favorite: todoTicketFavoriteInput.checked,
             project: todoTicketProject.textContent.trim(),
-            type: 'Update'
+            type: 'Update',
         }
-        resetForm()
-        events.emit('projectSubmitted', editedTodoData.project)
-        events.emit('todoSubmitted', editedTodoData)
-    })
+
+        resetForm();
+        events.emit('projectSubmitted', editedTodoData.project);
+        events.emit('todoSubmitted', editedTodoData);
+    });
 
     events.on('todoDataEdited', function(todoClone) {
         if (todoClone.id === todoTicket.id) {
-            todoTicketTask.textContent = todoClone.task
-            todoTicketDate.textContent = todoClone.date
-            todoTicketTime.textContent = todoClone.time
-            todoTicketProject.textContent = todoClone.project
-            setPriorityIcon(todoTicket, todoClone)
-            setFavoriteIcon(todoTicket, todoClone)
+            todoTicketTask.textContent = todoClone.task;
+            todoTicketDate.textContent = todoClone.date;
+            todoTicketTime.textContent = todoClone.time;
+            todoTicketProject.textContent = todoClone.project;
+            setPriorityIcon(todoTicket, todoClone);
+            setFavoriteIcon(todoTicket, todoClone);
+
             if (todoClone.pastDue()) {
-                todoTicketDate.classList.add('date-past-due')
-                todoTicketTime.classList.add('time-past-due')
+                todoTicketDate.classList.add('date-past-due');
+                todoTicketTime.classList.add('time-past-due');
             } else {
-                todoTicketDate.classList.remove('date-past-due')
-                todoTicketTime.classList.remove('time-past-due')
+                todoTicketDate.classList.remove('date-past-due');
+                todoTicketTime.classList.remove('time-past-due');
             }
-            //todoData = todoClone//Changes todoData of ticket
         }
-    })
+    });
 
     //Utility Functions
     function resetForm() {
+
         let editableEls = [
             todoTicketTask,
             todoTicketDate,
             todoTicketTime,
             todoTicketProject
-        ]
+        ];
+
         editableEls.forEach(el => {
-            el.removeAttribute('data-placeholder', '.input-active')
-            el.contentEditable = false
-        })
-        todoTicketFormBox.classList.remove('form-box-active')
-        todoTicketTask.textContent = todoData.task
-        todoTicketDate.textContent = todoData.date
-        todoTicketTime.textContent = todoData.time
-        todoTicketProject.textContent = todoData.project
-        const priorityIconEl = todoTicket.children[0].children[0].children[1].children[0].children[0]
+            el.removeAttribute('data-placeholder', '.input-active');
+            el.contentEditable = false;
+        });
+
+        todoTicketFormBox.classList.remove('form-box-active');
+        todoTicketTask.textContent = todoData.task;
+        todoTicketDate.textContent = todoData.date;
+        todoTicketTime.textContent = todoData.time;
+        todoTicketProject.textContent = todoData.project;
+        const priorityIconEl = todoTicket.children[0].children[0].children[1].children[0].children[0];
+
         if (priorityIconEl.classList.contains('todo-ticket-priority-active')) {
-            todoTicketPriorityInput.checked = true
+            todoTicketPriorityInput.checked = true;
         } else {
-            todoTicketPriorityInput.checked = false
+            todoTicketPriorityInput.checked = false;
         }
-        const favoriteIconEl = todoTicket.children[0].children[0].children[1].children[0].children[1]
+
+        const favoriteIconEl = todoTicket.children[0].children[0].children[1].children[0].children[1];
+
         if (favoriteIconEl.classList.contains('todo-ticket-favorite-active')) {
-            todoTicketFavoriteInput.checked = true
+            todoTicketFavoriteInput.checked = true;
         } else {
-            todoTicketFavoriteInput.checked = false
+            todoTicketFavoriteInput.checked = false;
         }
     }
 
     function setPriorityIcon(todoTicket, todo) {
-        const priorityIconEl = todoTicket.children[0].children[0].children[1].children[0].children[0]
-        const todoTicketPriorityInput = todoTicket.children[1].children[0].children[0].children[1]
+
+        const priorityIconEl = todoTicket.children[0].children[0].children[1].children[0].children[0];
+        const todoTicketPriorityInput = todoTicket.children[1].children[0].children[0].children[1];
+
         if (todo.priority === true) {
-            priorityIconEl.classList.add('todo-ticket-priority-active')
-            todoTicketPriorityInput.checked = true
+            priorityIconEl.classList.add('todo-ticket-priority-active');
+            todoTicketPriorityInput.checked = true;
         } else {
-            priorityIconEl.classList.remove('todo-ticket-priority-active')
-            todoTicketPriorityInput.checked = false
+            priorityIconEl.classList.remove('todo-ticket-priority-active');
+            todoTicketPriorityInput.checked = false;
         }
     }
     
     function setFavoriteIcon(todoTicket, todo) {
-        const favoriteIconEl = todoTicket.children[0].children[0].children[1].children[0].children[1]
-        const todoTicketFavoriteInput = todoTicket.children[1].children[0].children[1].children[1]
+
+        const favoriteIconEl = todoTicket.children[0].children[0].children[1].children[0].children[1];
+        const todoTicketFavoriteInput = todoTicket.children[1].children[0].children[1].children[1];
+
         if (todo.favorite === true) {
-            favoriteIconEl.classList.add('todo-ticket-favorite-active')
-            todoTicketFavoriteInput.checked = true
+            favoriteIconEl.classList.add('todo-ticket-favorite-active');
+            todoTicketFavoriteInput.checked = true;
         } else {
-            favoriteIconEl.classList.remove('todo-ticket-favorite-active')
-            todoTicketFavoriteInput.checked = false
+            favoriteIconEl.classList.remove('todo-ticket-favorite-active');
+            todoTicketFavoriteInput.checked = false;
         }
     }
 
-    return todoTicket
+    return todoTicket;
 }
