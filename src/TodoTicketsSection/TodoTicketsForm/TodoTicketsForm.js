@@ -1,7 +1,6 @@
 import './TodoTicketsForm.css';
 import { createHTML } from '../../global-functions';
 import { events } from '../../pub-sub';
-import TodoTicket from '../TodoTicket/TodoTicket';
 
 function TodoTicketsForm() {
 
@@ -9,42 +8,45 @@ function TodoTicketsForm() {
         <div id="todo-ticket-form-container">
             <form>
                 <fieldset class="main">
-                    <input class="add-todo-form-task-input" name="task" type="text" placeholder="New Task"/>
-                    <button class="add-todo-form-button">Add Task</button>
+                    <label class="hide" for="task">Task</label>
+                    <input name="task" id="task" type="text" placeholder="New Task"/>
+                    <button>Add Task</button>
                 </fieldset>
-                <fieldset class="add-todo-form-optional">
-                    <input class="add-todo-form-date-input" type="text" name="date" placeholder="Today"/>
-                    <input class="add-todo-form-time-input" type="text" name="time" placeholder="Time"/>
-                    <input type="text" name="project" placeholder="Project"/>
+                <fieldset class="optional">
+                    <label class="hide" for="date">Date</label>
+                    <input type="text" name="date" id="date" placeholder="Today"/>
+                    <label class="hide" for="time">Time</label>
+                    <input type="text" name="time" id="time" placeholder="Time"/>
+                    <label class="hide" for="project">Project</label>
+                    <input type="text" name="project" id="project" placeholder="Project"/>
                     <div style="display: flex; align-items: center">
                         <label for="priority" style="margin-left: 4px">!</label>
-                        <input class="add-todo-form-priority-input" name="priority" type="checkbox" value="important"/>
+                        <input name="priority" id="priority" type="checkbox" value="important"/>
                     </div>
                     <div style="display: flex; align-items: center">
                         <label class="favorite-label" for="favorite"></label>
-                        <input class="add-todo-form-favorite-input" name="favorite" type="checkbox" value="favorite"/>
+                        <input name="favorite" id="favorite" type="checkbox" value="favorite"/>
                     </div>
                 </fieldset>
             </form>
-            <div class="open-form-button-icon">
-                <div class="open-form-button-bar1"></div>
-                <div class="open-form-button-bar2"></div>
-            </div>
+            <button>
+                <div class="bar1"></div>
+                <div class="bar2"></div>
+            </button>
         </div>
     `);
 
     //Cache HTML
     const todoTicketsFormButton = todoTicketsForm.children[1];
-    const addTodoForm = todoTicketsForm.children[0];
     const addTodoFormRequiredFields = todoTicketsForm.children[0].children[0];
-    const addTodoFormTaskInput = addTodoForm.children[0].children[0];
-    const addTodoFormSubmitButton = addTodoForm.children[0].children[1];
-    const addTodoFormOptionalFields = addTodoForm.children[1];
-    const addTodoFormDateInput = addTodoFormOptionalFields.children[0];
-    const addTodoFormTimeInput = addTodoFormOptionalFields.children[1];
-    const addTodoFormProjectInput = addTodoFormOptionalFields.children[2];
-    const addTodoFormPriorityInput = addTodoFormOptionalFields.children[3].children[1];
-    const addTodoFormFavoriteInput = addTodoFormOptionalFields.children[4].children[1];
+    const addTodoFormTaskInput = todoTicketsForm.children[0].children[0].children[1];
+    const addTodoFormSubmitButton = todoTicketsForm.children[0].children[0].children[2];
+    const addTodoFormOptionalFields = todoTicketsForm.children[0].children[1];
+    const addTodoFormDateInput = todoTicketsForm.children[0].children[1].children[1];
+    const addTodoFormTimeInput = todoTicketsForm.children[0].children[1].children[3];
+    const addTodoFormProjectInput = todoTicketsForm.children[0].children[1].children[5];
+    const addTodoFormPriorityInput = todoTicketsForm.children[0].children[1].children[6].children[1];
+    const addTodoFormFavoriteInput = todoTicketsForm.children[0].children[1].children[7].children[1];
 
     //Bind Events
     events.on('setTime', function(nextHour) {
@@ -52,9 +54,9 @@ function TodoTicketsForm() {
     });
 
     todoTicketsFormButton.addEventListener('click', () => {
-        todoTicketsFormButton.classList.toggle('open-form-button-pressed');
+        todoTicketsFormButton.classList.toggle('active');
         addTodoFormRequiredFields.classList.toggle('main-active');
-        addTodoFormOptionalFields.classList.toggle('add-todo-form-optional-active');
+        addTodoFormOptionalFields.classList.toggle('optional-active');
     });
 
     addTodoFormSubmitButton.addEventListener('click', (e) => {
@@ -67,7 +69,7 @@ function TodoTicketsForm() {
             priority: addTodoFormPriorityInput.checked,
             favorite: addTodoFormFavoriteInput.checked,
             project: addTodoFormProjectInput.value.trim(),
-            type: 'Create'
+            type: 'Create',
         }
 
         events.emit('projectSubmitted', newTodoData.project);

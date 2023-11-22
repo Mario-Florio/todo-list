@@ -9,3 +9,10 @@ body {
     margin: 0;
     height: 100lvh;
 }
+
+.hide {
+    position: absolute !important;
+    top: -9999px !important;
+    left: -9999px !important;
+}
+ 

@@ -11,17 +11,21 @@
     border-top: .5px solid rgb(69, 69, 69);
 }
 
-.open-form-button-icon {
+
+#todo-ticket-form-container > button {
     padding: 5px;
+    border: none;
     border-radius: 20px;
     cursor: pointer;
 }
 
-.open-form-button-icon:hover, .open-form-button-pressed {
+
+#todo-ticket-form-container > button:hover,
+#todo-ticket-form-container > button.active {
     background-image: linear-gradient(to bottom right, rgb(231, 231, 231), rgb(241, 241, 241));
 }
 
-.open-form-button-bar1 {
+#todo-ticket-form-container > button > .bar1 {
     position: relative;
     left: 9.5px;
     background-color: black;
@@ -29,7 +33,7 @@
     width: 1px;
 }
 
-.open-form-button-bar2 {
+#todo-ticket-form-container > button > .bar2 {
     position: relative;
     bottom: 10px;
     background-color: black;
@@ -38,7 +42,7 @@
 }
 
     /* Form */
-#todo-ticket-form-container form {
+#todo-ticket-form-container > form {
     width: 100%;
 }
 
@@ -59,7 +63,7 @@
     transition: 0.4s ease-in-out;   
 }
 
-.add-todo-form-task-input {
+#todo-ticket-form-container .main > input {
     font-size: .9;
     font-weight: 200;
     background: transparent;
@@ -68,11 +72,11 @@
     border: none;
 }
 
-.add-todo-form-task-input::placeholder {
+#todo-ticket-form-container .main > input::placeholder {
     font-weight: 200;
 }
 
-.add-todo-form-button {
+#todo-ticket-form-container > form button {
     font-size: .7rem;
     font-weight: 300;
     background: none;
@@ -80,7 +84,7 @@
     cursor: pointer;
 }
 
-.add-todo-form-optional {
+#todo-ticket-form-container .optional {
     display: flex;
     justify-content: start;
     border: none;
@@ -90,7 +94,7 @@
     transition: 0.4s ease-in-out;
 }
 
-.add-todo-form-optional-active {
+#todo-ticket-form-container .optional-active {
     opacity: 1;
     pointer-events: inherit;
     transform: translateY(0);
@@ -98,7 +102,7 @@
     transition-delay: 0.2s;
 }
 
-.add-todo-form-optional > input {
+#todo-ticket-form-container .optional > input {
     font-weight: 200;
     background: transparent;
     max-width: 60px;
@@ -106,7 +110,7 @@
     outline: none;
 }
 
-.favorite-label {
+#todo-ticket-form-container .favorite-label {
     background-image: url('../favorites-gray.svg');
     background-size: contain;
     background-repeat: no-repeat;
