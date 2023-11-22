@@ -7,14 +7,14 @@ import { Todo } from './todos';
 
 const body = document.querySelector('body');
 const root = document.createElement('div');
-root.id = 'root'
+root.id = 'root';
 body.append(root);
 
 let homePage = [
     navbar, 
     sideMenuModule, 
     header, 
-    todoTicketSectionModule.todoTicketSection
+    todoTicketSectionModule.todoTicketSection,
 ];
 
 homePage.map(components => root.append(components));
