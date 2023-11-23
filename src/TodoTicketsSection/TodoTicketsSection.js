@@ -7,9 +7,9 @@ import TodoTicket from "./TodoTicket/TodoTicket";
 const TodoTicketsSection = (function() {
 
     const todoTicketsSection = createHTML(`
-        <div class="todo-ticket-section">
-            <div class="todo-ticket-container"></div>
-        </div>
+        <section class="todo-ticket-section">
+            <ul class="todo-ticket-container"></ul>
+        </section>
     `);
 
     const todoTicketsForm = TodoTicketsForm();
