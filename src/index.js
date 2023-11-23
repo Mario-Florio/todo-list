@@ -1,7 +1,7 @@
 import './style.css';
 import Navbar from './Navbar/Navbar';
 import SideMenu from './SideMenu/SideMenu';
-import Header from './Header/header';
+import Header from './Header/Header';
 import TodoTicketsSection from './TodoTicketsSection/TodoTicketsSection';
 import Todo from './todos';
 
