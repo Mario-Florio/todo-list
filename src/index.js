@@ -1,9 +1,9 @@
 import './style.css';
-import { navbar } from './navbar/navbar';
-import { sideMenuModule } from './side-menu/side-menu';
-import { header } from './header/header';
+import Navbar from './Navbar/Navbar';
+import SideMenu from './SideMenu/SideMenu';
+import Header from './Header/header';
 import TodoTicketsSection from './TodoTicketsSection/TodoTicketsSection';
-import { Todo } from './todos';
+import Todo from './todos';
 
 const body = document.querySelector('body');
 const root = document.createElement('div');
@@ -11,9 +11,9 @@ root.id = 'root';
 body.append(root);
 
 let homePage = [
-    navbar, 
-    sideMenuModule, 
-    header, 
+    Navbar, 
+    SideMenu, 
+    Header, 
     TodoTicketsSection,
 ];
 

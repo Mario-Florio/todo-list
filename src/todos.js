@@ -16,7 +16,7 @@ import {
     isFriday,
     isSaturday
     } from 'date-fns';
-import { events } from './pub-sub';
+import events from './pub-sub';
 
 class TodoList {
     constructor() {
@@ -77,7 +77,7 @@ function saveTodoList() {
     localStorage.setItem(LOCAL_STORAGE_LIST_KEY, todoListSerialized);
 }
 
-export class Todo {
+class Todo {
     constructor(task, date, time, id) {
         this.task = task;
         this.date = date;
@@ -530,3 +530,5 @@ function inputConverter(input) {
 
     return input;
 }
+
+export default Todo;

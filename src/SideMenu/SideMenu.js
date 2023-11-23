@@ -1,8 +1,8 @@
 import { createHTML } from '../global-functions';
-import { events } from '../pub-sub';
-import './side-menu.css';
+import events from '../pub-sub';
+import './SideMenu.css';
 
-const sideMenuModule = (function() {
+const SideMenu = (function() {
     const sideMenu = createHTML(`
         <div class="side-menu"></div>
     `);
@@ -157,9 +157,7 @@ const sideMenuModule = (function() {
 
 })();
 
-export {
-    sideMenuModule
-}
+export default SideMenu;
 
 function createProjectLink(project) {
     let projectLink = createHTML(`

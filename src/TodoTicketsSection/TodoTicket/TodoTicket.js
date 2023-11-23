@@ -1,6 +1,6 @@
 import './TodoTicket.css';
 import { createHTML } from '../../global-functions';
-import { events } from "../../pub-sub";
+import events from "../../pub-sub";
 import TodoTicketSection from '../TodoTicketsSection';
 
 function TodoTicket(todoData) {

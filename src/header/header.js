@@ -1,14 +1,14 @@
+import './Header.css';
 import { createHTML } from '../global-functions';
-import { events } from '../pub-sub';
-import './header.css';
+import events from '../pub-sub';
 
-export const header = createHTML(`
+const Header = createHTML(`
     <div>
         <div id="header">TodoList</div>
     </div>
 `);
 
-const subHeader = createHTML(`
+const SubHeader = createHTML(`
     <div id="sub-header">
         <div class="slide" data-project data-sort="All" data-active>All</div>
         <div class="slide" data-project data-sort="Today">Today</div>
@@ -18,21 +18,21 @@ const subHeader = createHTML(`
     </div>
 `);
 
-header.appendChild(subHeader);
+Header.appendChild(SubHeader);
 
 //Cache HTML
-const sortLinks = subHeader.children;
+const sortLinks = SubHeader.children;
 const getActiveSlide = function() {
-    const activeSlide = subHeader.querySelector('[data-active]');
+    const activeSlide = SubHeader.querySelector('[data-active]');
     return activeSlide;
 }
 
 //Bind Events
 events.on('todolistSelected', function setHeader(selectedTodolist) {
     if (selectedTodolist.selectedProject === '') {
-        header.children[0].textContent = 'TodoList';
+        Header.children[0].textContent = 'TodoList';
     } else {
-        header.children[0].textContent = selectedTodolist.selectedProject;
+        Header.children[0].textContent = selectedTodolist.selectedProject;
     }
 });
 
@@ -69,3 +69,5 @@ events.on('projectSelected', function(selectedProject) {
         link.dataset.project = selectedProject;
     }
 });
+
+export default Header;

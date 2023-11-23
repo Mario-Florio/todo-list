@@ -1,8 +1,8 @@
+import './Navbar.css';
 import { createHTML } from '../global-functions';
-import { events } from '../pub-sub';
-import './navbar.css';
+import events from '../pub-sub';
 
-export const navbar = createHTML(`
+const Navbar = createHTML(`
     <div class="navbar"></div>
 `);
 
@@ -76,8 +76,8 @@ const navbarContainerRight = createHTML(`
     <div class="navbar-right-container"></div>
 `);
 
-navbar.appendChild(navbarContainerLeft);
-navbar.appendChild(navbarContainerRight);
+Navbar.appendChild(navbarContainerLeft);
+Navbar.appendChild(navbarContainerRight);
 navbarContainerLeft.appendChild(hamburgerMenu);
 navbarContainerLeft.appendChild(links);
 links.children[0].appendChild(homeDropdown);
@@ -166,3 +166,5 @@ projectsDropdown.addEventListener('mouseleave', () => {
     let dropdownMenu = event.target.parentNode.children[1];
     dropdownMenu.classList.toggle('navbar-dropdown-menu-active');
 });
+
+export default Navbar;
