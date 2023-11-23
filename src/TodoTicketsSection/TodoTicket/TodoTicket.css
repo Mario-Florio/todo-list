@@ -3,6 +3,7 @@
     display: flex;
     margin: 0;
     padding: .5rem 0rem .25rem;
+    width: 100%;
     border-top: .5px solid rgb(69, 69, 69);
     cursor: pointer;
     overflow: hidden;
@@ -13,13 +14,20 @@
 }
 
 .todo-ticket > .content {
-    width: 100%;
+    width: calc(100% - 45px);
 }
 
 .todo-ticket > .content > .top-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.todo-ticket >
+.content >
+.top-container >
+.left-container {
+    width: calc(100% - 75px);
 }
 
 .todo-ticket >
@@ -41,6 +49,7 @@ div {
     display: flex;
     justify-content: space-between; 
     align-items: center;
+    width: 100%;
     pointer-events: none;
     opacity: 0;
     transition: .4s ease-in-out;
@@ -70,14 +79,13 @@ div {
     margin-right: 1rem;
 }
 
-/* Contents */
 .todo-ticket:hover {
     background-image: 
         linear-gradient(to bottom right, rgb(247, 247, 247), rgb(223, 223, 223));
 }
 
 .todo-ticket .task {
-    max-width: 100%;
+    max-width: 80%;
     outline: none;
     word-wrap: break-word;
     overflow: hidden;
