@@ -19,11 +19,11 @@ function TodoTicketsForm() {
                     <input type="text" name="time" id="time" placeholder="Time"/>
                     <label class="hide" for="project">Project</label>
                     <input type="text" name="project" id="project" placeholder="Project"/>
-                    <div style="display: flex; align-items: center">
+                    <div class="align-inline">
                         <label for="priority" style="margin-left: 4px">!</label>
                         <input name="priority" id="priority" type="checkbox" value="important"/>
                     </div>
-                    <div style="display: flex; align-items: center">
+                    <div class="align-inline">
                         <label class="favorite-label" for="favorite"></label>
                         <input name="favorite" id="favorite" type="checkbox" value="favorite"/>
                     </div>
