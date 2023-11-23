@@ -7,11 +7,11 @@ function TodoTicket(todoData) {
 
     const todoTicket = createHTML(`
         <form class="todo-ticket new-todo-ticket">
-            <div style="display: flex; justify-content: space-between; align-items: center">
+            <div class="top-container">
                 <div class="left-container">
                     <input type="radio" class="todo-completed"/>
                     <div>
-                        <div style="display: flex">
+                        <div class="align-inline" style="border-bottom: .2px solid rgba(69, 69, 69, 0.252)">
                             <div class="priority-display">!</div>
                             <div class="favorite-display"></div>
                             <div type="text" class="task">${todoData.task}</div>
@@ -26,13 +26,13 @@ function TodoTicket(todoData) {
                     <div class="project">${todoData.project}</div>
                 </div>
             </div>
-            <div class="favorite-priority-container">
-                <div style="display: flex; align-items: center; margin: 10px 0 0 55px">
-                    <div style="display: flex; align-items: center">
+            <div class="bottom-container">
+                <div class="priority-favorite-container">
+                    <div class="align-inline">
                         <label for="priority" style="margin-left: 4px">!</label>
                         <input name="priority" type="checkbox" value="important"/>
                     </div>
-                    <div style="display: flex; align-items: center">
+                    <div class="align-inline">
                         <label class="favorite-label" for="favorite"></label>
                         <input name="favorite" type="checkbox" value="favorite"/>
                     </div>
@@ -90,7 +90,7 @@ function TodoTicket(todoData) {
             todoTicketDate.dataset.placeholder = 'Edit Date';
             todoTicketTime.dataset.placeholder = 'Edit Time';
             todoTicketProject.dataset.placeholder = 'Edit Project';
-            todoTicketFormBox.classList.add('favorite-priority-container-active');
+            todoTicketFormBox.classList.add('bottom-container-active');
         }
     });
 
@@ -156,11 +156,12 @@ function TodoTicket(todoData) {
         ];
 
         editableEls.forEach(el => {
-            el.removeAttribute('data-placeholder', '.input-active');
+            el.removeAttribute('data-placeholder');
+            el.classList.remove('input-active');
             el.contentEditable = false;
         });
 
-        todoTicketFormBox.classList.remove('favorite-priority-container-active');
+        todoTicketFormBox.classList.remove('bottom-container-active');
         todoTicketTask.textContent = todoData.task;
         todoTicketDate.textContent = todoData.date;
         todoTicketTime.textContent = todoData.time;

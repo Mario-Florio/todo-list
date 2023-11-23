@@ -10,6 +10,11 @@ body {
     height: 100lvh;
 }
 
+.align-inline {
+    display: flex;
+    align-items: center;
+}
+
 .hide {
     position: absolute !important;
     top: -9999px !important;
