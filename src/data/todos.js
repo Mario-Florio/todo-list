@@ -1,33 +1,23 @@
 import {
     format,
     isToday,
-    isPast,
     endOfHour,
     addSeconds,
     isValid,
-    isThisWeek,
     startOfDay,
-    addDays,
-    isSunday,
-    isMonday,
-    isTuesday,
-    isWednesday,
-    isThursday,
-    isFriday,
-    isSaturday
 } from 'date-fns';
 import events from '../pub-sub';
+import { inputConverter, dateConverter } from './utility';
 import { TodoList, Project, Todo } from './data-structure';
 
 const todoList = new TodoList();
+const projects = [];
 const LOCAL_STORAGE_LIST_KEY = 'todoList.todoList';
 
 function saveTodoList() {
     let todoListSerialized = JSON.stringify(todoList.all);
     localStorage.setItem(LOCAL_STORAGE_LIST_KEY, todoListSerialized);
 }
-
-const projects = [];
 
 //Bind Events
 window.addEventListener('load', () => {
@@ -103,7 +93,8 @@ events.on('date&timeInputParsed-CreateTodo', function createTodo(newTodoData) {
     saveTodoList();
 
     let newTodoClone = cloneTodo(newTodo);
-    newTodoClone.date = convertData(newTodoData.date);
+    newTodoClone.date = dateConverter
+(newTodoData.date);
 
     events.emit('todoListUpdated', todoList);
     events.emit('todoCreated', newTodoClone);
@@ -149,7 +140,7 @@ events.on('date&timeParsed-UpdateTodo', function(editedTodoData) {
             saveTodoList();
 
             let todoClone = cloneTodo(todo);
-            todoClone.date = convertData(editedTodoData.date);
+            todoClone.date = dateConverter(editedTodoData.date);
 
             events.emit('todoListUpdated', todoList);
             events.emit('todoDataEdited', todoClone);
@@ -231,7 +222,7 @@ events.on('todolistSelected', function displayTodos(selectedTodolist) {
 
     if (selectedTodolist.selectedSort === 'All') {
         todoListClone.all.forEach(todo => {
-            todo.date = convertData(todo.date);
+            todo.date = dateConverter(todo.date);
         });
 
         events.emit('displayTodoList', todoListClone.all);
@@ -242,7 +233,7 @@ events.on('todolistSelected', function displayTodos(selectedTodolist) {
     if (selectedTodolist.selectedSort === 'Today') {
         let dueToday = todoListClone.dueToday();
         dueToday.forEach(todo => {
-            todo.date = convertData(todo.date);
+            todo.date = dateConverter(todo.date);
         });
 
         events.emit('displayTodoList', dueToday);
@@ -254,7 +245,7 @@ events.on('todolistSelected', function displayTodos(selectedTodolist) {
         let upcoming = todoListClone.upcoming();
 
         upcoming.forEach(todo => {
-            todo.date = convertData(todo.date);
+            todo.date = dateConverter(todo.date);
         });
 
         events.emit('displayTodoList', upcoming);
@@ -266,7 +257,7 @@ events.on('todolistSelected', function displayTodos(selectedTodolist) {
         let important = todoListClone.important();
 
         important.forEach(todo => {
-            todo.date = convertData(todo.date);
+            todo.date = dateConverter(todo.date);
         });
 
         events.emit('displayTodoList', important);
@@ -278,7 +269,7 @@ events.on('todolistSelected', function displayTodos(selectedTodolist) {
         let favorites = todoListClone.favorites();
 
         favorites.forEach(todo => {
-            todo.date = convertData(todo.date);
+            todo.date = dateConverter(todo.date);
         });
 
         events.emit('displayTodoList', favorites);
@@ -304,118 +295,5 @@ function cloneTodo(todo) {
     return todoClone;
 }
 
-function convertData(date) {
-    if (isToday(new Date(date))) {
-        return 'Today';
-    }
-
-    if (isThisWeek(new Date(date)) && !isPast(new Date(date))) {
-        switch (new Date(date).getDay()) {
-            case 0:
-                date = "Sunday";
-                break;
-            case 1:
-                date = "Monday";
-                break;
-            case 2:
-                date = "Tuesday";
-                break;
-            case 3:
-                date = "Wednesday";
-                break;
-            case 4:
-                date = "Thursday";
-                break;
-            case 5:
-                date = "Friday";
-                break;
-            case 6:
-                date = "Saturday";
-        }
-    }
-    return date;
-}
-
-function inputConverter(input) {
-    if (input === 'today') {
-        return format(new Date(), 'M/d/yyyy');
-    }
-
-    if (input === 'tomorrow') {
-        return format(addDays(new Date(), 1), 'M/d/yyyy');
-    }
-
-    if (input === 'sunday') {
-        for (let i = 0; i < 7; i++) {
-            let day = addDays(new Date(), i);
-            if (isSunday(day)) {
-                return format(new Date(day), 'M/d/yyyy');
-            }
-        }
-    }
-
-    if (input === 'monday') {
-        for (let i = 0; i < 7; i++) {
-            let day = addDays(new Date(), i);
-            if (isMonday(day)) {
-                return format(new Date(day), 'M/d/yyyy');
-            }
-        }
-    }
-
-    if (input === 'tuesday') {
-        for (let i = 0; i < 7; i++) {
-            let day = addDays(new Date(), i);
-
-            if (isTuesday(day)) {
-                return format(new Date(day), 'M/d/yyyy');
-            }
-        }
-    }
-
-    if (input === 'wednesday') {
-        for (let i = 0; i < 7; i++) {
-            let day = addDays(new Date(), i);
-
-            if (isWednesday(day)) {
-                return format(new Date(day), 'M/d/yyyy');
-            }
-        }
-    }
-
-    if (input === 'thursday') {
-        for (let i = 0; i < 7; i++) {
-            let day = addDays(new Date(), i);
-
-            if (isThursday(day)) {
-                return format(new Date(day), 'M/d/yyyy');
-            }
-        }
-    }
-
-    if (input === 'friday') {
-        for (let i = 0; i < 7; i++) {
-            let day = addDays(new Date(), i);
-
-            if (isFriday(day)) {
-                return format(new Date(day), 'M/d/yyyy');
-            }
-        }
-    }
-
-    if (input === 'saturday') {
-        for (let i = 0; i < 7; i++) {
-            let day = addDays(new Date(), i);
-
-            if (isSaturday(day)) {
-                return format(new Date(day), 'M/d/yyyy');
-            }
-        }
-    }
-
-    return input;
-}
-
 const KEY = 'Export to connect to bundle';
-
 export default KEY;

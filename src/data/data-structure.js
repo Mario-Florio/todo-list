@@ -62,9 +62,10 @@ class TodoList {
 }
 
 class Project extends TodoList {
-    constructor(name) {
+    constructor(name, id) {
         super();
         this.name = name;
+        this.id = id || null;
     }
 
     addTodo(todo) {
@@ -79,11 +80,12 @@ class Project extends TodoList {
 }
 
 class Todo {
-    constructor(task, date, time, id) {
+    constructor(task, date, time, id, projectId) {
         this.task = task;
         this.date = date;
         this.time = time;
         this.id = id;
+        this.projectId = projectId || null;
     }
 
     setPriority() {
@@ -116,6 +118,7 @@ class Todo {
 
     addToProject(project) {
         project.all.push(this);
+        this.projectId = project.id;
     }
 }
 
