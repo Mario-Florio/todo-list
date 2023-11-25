@@ -36,7 +36,13 @@ class TodoList {
     }
 
     upcoming() {
-        let upcoming = [...this.all].sort((a, b) => 
+        let upcoming = this.all.filter(todo => {
+            let todosDate = new Date(`${todo.date} ${todo.time}`);
+            if (todosDate > new Date()) {
+                return todo;
+            }
+        });
+        upcoming.sort((a, b) => 
             new Date(`${a.date} ${a.time}`) > new Date(`${b.date} ${b.time}`) ? 1 : -1);
         return upcoming;
     }
@@ -190,7 +196,7 @@ events.on('todoSubmitted', function parseDateTime(todoData) {
     if (todoData.type === 'Update') {
         events.emit('date&timeParsed-UpdateTodo', todoData);
     }
-})
+});
 
 events.on('date&timeInputParsed-CreateTodo', function createTodo(newTodoData) {
     newTodoData.id = format(new Date(), 'MM/dd/yyyy HH:mm:ss:SSSS');
@@ -222,7 +228,7 @@ events.on('date&timeInputParsed-CreateTodo', function createTodo(newTodoData) {
 
     events.emit('todoListUpdated', todoList);
     events.emit('todoCreated', newTodoClone);
-})
+});
 
 events.on('date&timeParsed-UpdateTodo', function(editedTodoData) {
     todoList.all.forEach(todo => {
