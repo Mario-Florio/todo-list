@@ -35,22 +35,21 @@ window.addEventListener('load', () => {
 
     //Todos
 events.on('todoSubmitted', function parseDateTime(todoData) {
+    // Convert Date to Acceptable Format
     if (todoData.date === '') {
         todoData.date = format(new Date(), 'M/d/yyyy');
     } else {
         todoData.date = inputConverter(todoData.date);
     }
+    // Set Default Time (if no time is given)
     if (todoData.time === '' && isToday(new Date(todoData.date))) {
         let nextHour = format(addSeconds(endOfHour(new Date()), 1), 'H:mm');
         todoData.time = nextHour;
-    }
-    if (todoData.time === '' && !isToday(new Date(todoData.date))) {
+    } else if (todoData.time === '' && !isToday(new Date(todoData.date))) {
         let nextHour = format(addSeconds(startOfDay(new Date()), 1), 'H:mm');
         todoData.time = nextHour;
     }
-    if (!isValid(new Date(todoData.date))) {
-        return;
-    }
+    // Validate Date & Time 
     if (!isValid(new Date(`${todoData.date} ${todoData.time}`))) {
         return;
     }
@@ -93,8 +92,7 @@ events.on('date&timeInputParsed-CreateTodo', function createTodo(newTodoData) {
     saveTodoList();
 
     let newTodoClone = cloneTodo(newTodo);
-    newTodoClone.date = dateConverter
-(newTodoData.date);
+    newTodoClone.date = dateConverter(newTodoData.date);
 
     events.emit('todoListUpdated', todoList);
     events.emit('todoCreated', newTodoClone);
