@@ -68,14 +68,14 @@ events.on('todoSubmitted', function parseDateTime(todoData) {
 
 events.on('date&timeInputParsed-CreateTodo', function createTodo(newTodoData) {
     newTodoData.id = format(new Date(), 'MM/dd/yyyy HH:mm:ss:SSSS');
-    let newTodo = new Todo(newTodoData.task, newTodoData.date, newTodoData.time, newTodoData.id);
-
-    if (newTodoData.priority === true) {
-        newTodo.setPriority();
-    }
-    if (newTodoData.favorite === true) {
-        newTodo.setFavorite();
-    }
+    let newTodo = new Todo(
+        newTodoData.task, 
+        newTodoData.date, 
+        newTodoData.time, 
+        newTodoData.id, 
+        newTodoData.priority, 
+        newTodoData.favorite
+    );
 
     newTodo.project = newTodoData.project;
 
@@ -104,17 +104,8 @@ events.on('date&timeParsed-UpdateTodo', function(editedTodoData) {
             todo.task = editedTodoData.task;
             todo.date = editedTodoData.date;
             todo.time = editedTodoData.time;
-
-            if (editedTodoData.priority === true) {
-                todo.setPriority();
-            } else {
-                todo.removePriority();
-            }
-            if (editedTodoData.favorite === true) {
-                todo.setFavorite();
-            } else {
-                todo.removeFavorite();
-            }
+            todo.priority = editedTodoData.priority;
+            todo.favorite = editedTodoData.favorite;
 
             projects.forEach(project => {
                 if (project.name === todo.project) {
@@ -142,6 +133,7 @@ events.on('date&timeParsed-UpdateTodo', function(editedTodoData) {
 
             events.emit('todoListUpdated', todoList);
             events.emit('todoDataEdited', todoClone);
+            return;
         }
     });
 });
@@ -278,15 +270,14 @@ events.on('todolistSelected', function displayTodos(selectedTodolist) {
 
 //Utility
 function cloneTodo(todo) {
-    let todoClone = new Todo(todo.task, todo.date, todo.time, todo.id);
-
-    if (todo.priority === true) {
-        todoClone.setPriority();
-    }
-
-    if (todo.favorite === true) {
-        todoClone.setFavorite();
-    }
+    let todoClone = new Todo(
+        todo.task,
+        todo.date,
+        todo.time,
+        todo.id,
+        todo.priority,
+        todo.favorite
+    );
 
     todoClone.project = todo.project;
 

@@ -80,28 +80,13 @@ class Project extends TodoList {
 }
 
 class Todo {
-    constructor(task, date, time, id, projectId) {
+    constructor(task, date, time, id, priority, favorite) {
         this.task = task;
         this.date = date;
         this.time = time;
         this.id = id;
-        this.projectId = projectId || null;
-    }
-
-    setPriority() {
-        this.priority = true;
-    }
-
-    removePriority() {
-        delete this.priority;
-    }
-
-    setFavorite() {
-        this.favorite = true;
-    }
-
-    removeFavorite() {
-        delete this.favorite;
+        this.priority = priority;
+        this.favorite = favorite;
     }
 
     pastDue() {
