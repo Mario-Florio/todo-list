@@ -295,5 +295,5 @@ function cloneTodo(todo) {
     return todoClone;
 }
 
-const KEY = 'Export to connect to bundle';
-export default KEY;
+const LINK = 'Export to connect to bundle';
+export default LINK;
