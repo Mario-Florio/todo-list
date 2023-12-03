@@ -65,7 +65,7 @@ class Project extends TodoList {
     constructor(name, id) {
         super();
         this.name = name;
-        this.id = id || null;
+        this.id = id;
     }
 
     addTodo(todo) {
@@ -80,21 +80,24 @@ class Project extends TodoList {
 }
 
 class Todo {
-    constructor(task, date, time, id, priority, favorite) {
+    constructor(id, task, date, time, priority, favorite, projectId) {
+        this.id = id;
         this.task = task;
         this.date = date;
         this.time = time;
-        this.id = id;
         this.priority = priority;
         this.favorite = favorite;
+        this.projectId = projectId;
     }
 
     pastDue() {
+        const todo_Hmm = parseInt(format(new Date(`1/1/1111 ${this.time}`), 'H:mm'));
+        const todo_mm = parseInt(format(new Date(`1/1/1111 ${this.time}`), 'mm'));
+        const rn_Hmm = parseInt(format(new Date(), 'H:mm'));
+        const rn_mm = parseInt(format(new Date(), 'mm'));
         if (
-                this.date === 'Today' && 
-                parseInt(format(new Date(`1/1/1111 ${this.time}`), 'H:mm')) < parseInt(format(new Date(), 'H:mm')) ||
-                (parseInt(format(new Date(`1/1/1111 ${this.time}`), 'H:mm')) === parseInt(format(new Date(), 'H:mm')) &&
-                parseInt(format(new Date(`1/1/1111 ${this.time}`), 'mm')) < parseInt(format(new Date(), 'mm')))
+                this.date === 'Today' && todo_Hmm < rn_Hmm || 
+                (todo_Hmm === rn_Hmm && todo_mm < rn_mm)
             ) {
             return true;
         }

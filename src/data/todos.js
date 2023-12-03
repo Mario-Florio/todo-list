@@ -67,21 +67,30 @@ events.on('todoSubmitted', function parseDateTime(todoData) {
 });
 
 events.on('date&timeInputParsed-CreateTodo', function createTodo(newTodoData) {
-    newTodoData.id = format(new Date(), 'MM/dd/yyyy HH:mm:ss:SSSS');
-    let newTodo = new Todo(
-        newTodoData.task, 
-        newTodoData.date, 
-        newTodoData.time, 
-        newTodoData.id, 
-        newTodoData.priority, 
-        newTodoData.favorite
-    );
-
-    newTodo.project = newTodoData.project;
+    const newTodoId = format(new Date(), 'MM/dd/yyyy HH:mm:ss:SSSS');
+    let newTodoProjectId = null;
 
     if (newTodoData.project !== '') {
         for (let i = 0; i < projects.length; i++) {
-            if (newTodoData.project === projects[i].name) {
+            if (newTodoData.project.toLowerCase() === projects[i].name.toLowerCase()) {
+                newTodoProjectId = projects[i].id;
+            }
+        }
+    }
+
+    let newTodo = new Todo(
+        newTodoId,
+        newTodoData.task,
+        newTodoData.date,
+        newTodoData.time,
+        newTodoData.priority,
+        newTodoData.favorite,
+        newTodoProjectId
+    );
+
+    if (newTodoData.project !== '') {
+        for (let i = 0; i < projects.length; i++) {
+            if (newTodoData.project.toLowerCase() === projects[i].name.toLowerCase()) {
                 projects[i].addTodo(newTodo);
                 events.emit('projectUpdated', projects[i]);
             }
@@ -107,8 +116,9 @@ events.on('date&timeParsed-UpdateTodo', function(editedTodoData) {
             todo.priority = editedTodoData.priority;
             todo.favorite = editedTodoData.favorite;
 
+            // Complete rework
             projects.forEach(project => {
-                if (project.name === todo.project) {
+                if (project.id === todo.projectId) {
                     project.removeTodo(todo);
                     events.emit('todoDeleted-Project', project);
                     events.emit('projectUpdated', project);
@@ -125,6 +135,7 @@ events.on('date&timeParsed-UpdateTodo', function(editedTodoData) {
                     }
                 }
             }
+            // Complete rework
 
             saveTodoList();
 
@@ -149,7 +160,7 @@ events.on('todoTicketDeleted', function(todoTicketData) {
     })();
 
     if (todoTicketData.project) {
-        let todosProject = projects.find(project => project.name === todoTicketData.project);
+        let todosProject = projects.find(project => project.name.toLowerCase() === todoTicketData.project.toLowerCase());
         todosProject.removeTodo(todoTicketData);
 
         events.emit('todoDeleted-Project', todosProject);
@@ -161,25 +172,17 @@ events.on('todoTicketDeleted', function(todoTicketData) {
 events.on('projectSubmitted', function(projectName) {
     if (projectName !== '') {
         for (let i = 0; i < projects.length; i++) {
-            if (projectName === projects[i].name) {
+            if (projectName.toLowerCase() === projects[i].name.toLowerCase()) {
                 return;
             }
         }
 
-        let newProject = new Project(projectName);
-        newProject.id = format(new Date(), 'm/d/yyyy HH:mm:ss:SSSS');
+        const newProjectId = format(new Date(), 'm/d/yyyy HH:mm:ss:SSSS');
+        let newProject = new Project(projectName, newProjectId);
         projects.push(newProject);
 
         events.emit('projectCreated', newProject);
     }
-});
-
-events.on('projectNameEdited', function(editedProject) {
-    let project = projects.find(project => project.id === editedProject.id);
-    project.name = editedProject.name;
-    project.all.forEach(todo => todo.project = project.name);
-
-    saveTodoList();
 });
 
 events.on('todoDeleted-Project', function(project) {
@@ -271,15 +274,22 @@ events.on('todolistSelected', function displayTodos(selectedTodolist) {
 //Utility
 function cloneTodo(todo) {
     let todoClone = new Todo(
+        todo.id,
         todo.task,
         todo.date,
         todo.time,
-        todo.id,
         todo.priority,
-        todo.favorite
+        todo.favorite,
+        todo.projectId
     );
 
-    todoClone.project = todo.project;
+    todoClone.project = '';
+
+    for (let i = 0; i < projects.length; i++) {
+        if (projects[i].id === todoClone.projectId) {
+            todoClone.project = projects[i].name;
+        }
+    }
 
     return todoClone;
 }

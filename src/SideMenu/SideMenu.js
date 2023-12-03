@@ -97,7 +97,7 @@ const SideMenu = (function() {
     events.on('projectUpdated', function updateProjectQuantities(project) {
         for (let link of projectLinks.children) {
             if (link.id === project.id) {
-                link.children[0].children[2].textContent = project.all.length;
+                link.children[0].children[1].textContent = project.all.length;
             }
         }
     });
@@ -164,7 +164,6 @@ function createProjectLink(project) {
         <div class="project-links" data-project="${project.name}">
             <div class="side-menu-links">
                 <div class="side-menu-links-left-container">${project.name}</div>
-                <button class="project-link-confirm-button">Confirm</button>
                 <div class="side-menu-links-right-container"></div>
             </div>
         </div>
@@ -182,23 +181,6 @@ function createProjectLink(project) {
         }
         events.emit('projectSelected', selectedTodolist.selectedProject);
         events.emit('todolistSelected', selectedTodolist);
-    });
-
-    projectLinkName.addEventListener('dblclick', () => {
-        projectLinkName.contentEditable = true;
-        projectLinkName.classList.add('input-active');
-        confirmButton.classList.add('project-link-confirm-button-active');
-    });
-
-    confirmButton.addEventListener('click', () => {
-        projectLinkName.contentEditable = false;
-        projectLinkName.classList.remove('input-active');
-        confirmButton.classList.remove('project-link-confirm-button-active');
-        let editedProject = {
-            name: projectLinkName.textContent,
-            id: projectLinkName.closest('.project-links').id
-        }
-        events.emit('projectNameEdited', editedProject);
     });
 
     return projectLink;
