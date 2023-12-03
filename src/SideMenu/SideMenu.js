@@ -169,10 +169,6 @@ function createProjectLink(project) {
         </div>
     `);
 
-    //Cache HTML
-    const projectLinkName = projectLink.children[0].children[0];
-    const confirmButton = projectLink.children[0].children[1];
-
     //Bind Events
     projectLink.addEventListener('click', (e) => {
         let selectedTodolist = {
