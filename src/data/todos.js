@@ -85,7 +85,7 @@ events.on('date&timeInputParsed-CreateTodo', function createTodo(newTodoData) {
         newTodoData.time,
         newTodoData.priority,
         newTodoData.favorite,
-        newTodoProjectId
+        newTodoData.project,
     );
 
     if (newTodoData.project !== '') {
@@ -115,6 +115,8 @@ events.on('date&timeParsed-UpdateTodo', function(editedTodoData) {
             todo.time = editedTodoData.time;
             todo.priority = editedTodoData.priority;
             todo.favorite = editedTodoData.favorite;
+
+            console.log(editedTodoData.project)
 
             // Complete rework
             projects.forEach(project => {
@@ -187,10 +189,10 @@ events.on('projectSubmitted', function(projectName) {
 
 events.on('todoDeleted-Project', function(project) {
     if (project.all.length === 0) {
-        events.emit('projectDeleted', project);
-
         let index = projects.findIndex(item => item.id === project.id);
         projects.splice(index, 1);
+
+        events.emit('projectDeleted', project);
     }
 });
 
@@ -280,10 +282,8 @@ function cloneTodo(todo) {
         todo.time,
         todo.priority,
         todo.favorite,
-        todo.projectId
+        todo.project,
     );
-
-    todoClone.project = '';
 
     for (let i = 0; i < projects.length; i++) {
         if (projects[i].id === todoClone.projectId) {
@@ -295,4 +295,4 @@ function cloneTodo(todo) {
 }
 
 const LINK = 'Export to connect to bundle';
-export default LINK;
+export { LINK , projects};

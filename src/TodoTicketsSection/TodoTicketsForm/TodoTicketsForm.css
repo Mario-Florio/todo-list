@@ -110,6 +110,14 @@
     outline: none;
 }
 
+#todo-ticket-form-container .optional > select {
+    font-weight: 200;
+    background: transparent;
+    max-width: 60px;
+    border: none;
+    outline: none;
+}
+
 #todo-ticket-form-container .favorite-label {
     background-image: url('../favorites-gray.svg');
     background-size: contain;
