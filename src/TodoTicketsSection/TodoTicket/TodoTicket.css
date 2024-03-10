@@ -1,0 +1,216 @@
+
+.todo-ticket {
+    display: flex;
+    margin: 0;
+    padding: .5rem 0rem .25rem;
+    width: 100%;
+    border-top: .5px solid rgb(69, 69, 69);
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.todo-ticket > input {
+    margin: 1rem;
+}
+
+.todo-ticket > .content {
+    width: calc(100% - 45px);
+}
+
+.todo-ticket > .content > .top-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.todo-ticket >
+.content >
+.top-container >
+.left-container {
+    width: calc(100% - 100px);
+}
+
+.todo-ticket >
+.content >
+.top-container >
+.left-container > div {
+    font-weight: 200;
+}
+
+.todo-ticket >
+.content >
+.top-container >
+.right-container >
+div {
+    margin: 0 1rem;
+    max-width: 70px;
+    outline: none;
+    word-wrap: break-word;
+    overflow: hidden;
+}
+
+.todo-ticket > .content > .bottom-container {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    width: 100%;
+    pointer-events: none;
+    opacity: 0;
+    transition: .4s ease-in-out;
+}
+
+.todo-ticket > .content > .bottom-container-active {
+    pointer-events: inherit;
+    opacity: 1;
+    transition: .4s ease-in-out;
+}
+
+.todo-ticket >
+.content >
+.bottom-container >
+.priority-favorite-container {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+.todo-ticket >
+.content >
+.bottom-container >
+div {
+    margin-right: 1rem;
+}
+
+.todo-ticket:hover {
+    background-image: 
+        linear-gradient(to bottom right, rgb(247, 247, 247), rgb(223, 223, 223));
+}
+
+.todo-ticket .task {
+    max-width: 80%;
+    outline: none;
+    word-wrap: break-word;
+    overflow: hidden;
+}
+
+.todo-ticket .priority-display {
+    display: none;
+    color: red;
+    font-weight: 600;
+    margin-right: 10px;
+}
+
+.todo-ticket .priority-display-active {
+    display: inherit;
+}
+
+.todo-ticket .favorite-display {
+    display: none;
+    background-image: url('../favorites.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    margin-right: 10px;
+    height: 16px;
+    width: 14.5px;
+}
+
+.todo-ticket .favorite-display-active {
+    display: inherit;
+}
+
+.todo-ticket .favorite-label {
+    background-image: url('../favorites-gray.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    margin-right: -2px;
+    height: 16px;
+    width: 14.5px;
+}
+
+.todo-ticket .date {
+    color: rgb(69, 69, 69);
+    font-size: .8rem;
+    outline: 0px solid transparent;
+}
+
+.todo-ticket .date-past-due {
+    color: rgb(168, 0, 0); 
+    font-weight: 300;
+}
+
+.todo-ticket .time {
+    color: rgb(69, 69, 69);
+    font-size: .8rem;
+    outline: 0px solid transparent;
+}
+
+.todo-ticket .time-past-due {
+    color: rgb(168, 0, 0); 
+    font-weight: 300;
+}
+
+.todo-ticket .project {
+    color: rgb(69, 69, 69);
+    font-size: .8rem;
+    font-weight: 200;
+    border: none;
+    outline: 0px solid transparent;
+}
+
+.todo-ticket button {
+    font-size: .7rem;
+    font-weight: 300;
+    background: none;
+    padding: 5px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+@keyframes append-animate {
+	from {
+        transform: translateY(35px);
+		opacity: 0;
+	}
+	to {
+		transform: translateY(0);
+		opacity: 1;	
+	}
+}
+
+.new-todo-ticket {
+	animation: append-animate .4s ease-in;
+}
+
+@keyframes remove-animate {
+	to {
+		opacity: 0;	
+	}
+}
+
+.remove-todo-ticket {
+	animation: remove-animate .5s ease-in-out;
+}
+
+@keyframes todo-input-animate {
+	from {
+        transform: scale(0);
+		opacity: 0;
+	}
+	to {
+		transform: scale(1);
+		opacity: 1;	
+	}
+}
+
+.input-active {
+    cursor: text;
+}
+
+[data-placeholder]:empty:before {
+    color: #888;
+    content: attr(data-placeholder);
+    animation: todo-input-animate .4s ease-in-out;
+}

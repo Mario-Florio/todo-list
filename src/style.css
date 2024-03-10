@@ -9,3 +9,15 @@ body {
     margin: 0;
     height: 100lvh;
 }
+
+.align-inline {
+    display: flex;
+    align-items: center;
+}
+
+.hide {
+    position: absolute !important;
+    top: -9999px !important;
+    left: -9999px !important;
+}
+ 
