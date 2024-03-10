@@ -295,4 +295,4 @@ function cloneTodo(todo) {
 }
 
 const LINK = 'Export to connect to bundle';
-export { LINK , projects};
+export default LINK;
